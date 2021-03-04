@@ -1,0 +1,30 @@
+{
+  "api_id": "api_id_here",
+  "api_hash": "api_hash_here",
+  "bot_token": "bot_token_here",
+  "chat_id": 0,
+  "chat_username": "",
+  "pinned_message": 0,
+  "playlist_id": "p0",
+  "limit": {
+    "chat_select_limit": 5,
+    "private_select_limit": 10,
+    "row_limit": 10,
+    "queue_limit": 50,
+    "recent_limit": 50,
+    "request_song_per_minute": 1
+  },
+  "vote": {
+    "enable": true,
+    "vote_time": 45,
+    "update_time": 15,
+    "release_time": 600,
+    "percent_of_success": 40,
+    "participants_only": true,
+    "user_must_join": false
+  },
+  "web": {
+    "enable": true,
+    "web_port": 2468
+  }
+}
