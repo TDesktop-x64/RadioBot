@@ -1,0 +1,9 @@
+.idea/*
+*.dll
+*.txt
+bot-*
+user-*
+*.exe
+config.json
+status.json
+release/*
