@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	bot       *tdlib.Client
+	bot *tdlib.Client
 	// SongQueue song queue channel
 	SongQueue = make(chan int, 100)
 )
