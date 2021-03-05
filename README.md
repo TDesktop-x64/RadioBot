@@ -40,8 +40,10 @@ via [TDesktop-x64 Chat](https://t.me/tg_x64_chat) :)
 
 1. [Telegram Desktop x64](https://github.com/TDesktop-x64/tdesktop) with Radio mode
 2. [foobar2000](https://www.foobar2000.org/) or [DeaDBeeF](https://deadbeef.sourceforge.io/)
-3. Virtual Audio (Windows: _VB-Cable_ Linux: _PulseAudio_ MacOS: _BlackHole_)
-4. [Beefweb](https://github.com/hyperblast/beefweb) with default settings
+3. Virtual Audio (Windows: _VB-Cable_ Linux: _PulseAudio_ macOS: _BlackHole_)
+4. [Beefweb](https://github.com/hyperblast/beefweb)
+
+*If you can't access [Beefweb Web Interface with default port](http://localhost:8880), please change the port through [beefweb plugins settings](images/beefweb_port.png) and edit [`beefweb_port`](#configuration) in config.json.*
 
 ### Setup
 
@@ -78,6 +80,7 @@ go build
 | `chat_id`        | Integer | Chat identifier, It can be empty if your group is public.         |
 | `chat_username`  | String  | Empty if your group is private and fill the `chat_id` field.      |
 | `pinned_message` | Integer | Info message of current song playing                              |
+| `beefweb_port`   | Integer | Beefweb Port, Default: 8880                                       |
 | `playlist_id`    | String  | foobar2000/DeaDBeeF playlist identifier,                          |
 |                  |         | Obtain ID from [Beefweb API](http://localhost:8880/api/playlists) |
 
