@@ -32,6 +32,10 @@ func GetPinnedMessage() int64 {
 	return config.PinnedMsg << 20
 }
 
+func GetBeefWebPort() int {
+	return config.BeefWebPort
+}
+
 func GetPlaylistId() string {
 	return config.PlaylistId
 }

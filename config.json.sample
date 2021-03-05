@@ -5,6 +5,7 @@
   "chat_id": 0,
   "chat_username": "",
   "pinned_message": 0,
+  "beefweb_port": 8880,
   "playlist_id": "p0",
   "limit": {
     "chat_select_limit": 5,
@@ -25,6 +26,6 @@
   },
   "web": {
     "enable": true,
-    "web_port": 2468
+    "port": 2468
   }
 }

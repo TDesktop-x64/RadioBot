@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/c0re100/RadioBot/utils"
 	"github.com/go-co-op/gocron"
 )
 
@@ -25,6 +26,11 @@ func ReadConfig() {
 	if err := LoadConfig(); err != nil {
 		log.Fatal(err)
 	}
+	// Check port is valid
+	port := GetWebPort()
+	utils.CheckPortIsValid("Web Server", port)
+	port = GetBeefWebPort()
+	utils.CheckPortIsValid("Beefweb", port)
 }
 
 func LoadConfig() error {

@@ -1,6 +1,9 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 func SecondsToMinutes(sec int64) string {
 	seconds := sec % 60
@@ -46,4 +49,10 @@ func FilterInt32(s []int32, cb func(s int32) bool) []int32 {
 	}
 
 	return results
+}
+
+func CheckPortIsValid(method string, port int) {
+	if port < 1024 || port > 65535 {
+		log.Fatal(method+" port range: 1024-65535, but current port is ", port)
+	}
 }

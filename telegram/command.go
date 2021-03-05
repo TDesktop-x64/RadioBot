@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/c0re100/RadioBot/config"
 	"github.com/c0re100/RadioBot/fb2k"
@@ -13,7 +14,7 @@ import (
 )
 
 func getCurrentPlaying(chatId, msgId int64) {
-	resp, err := http.Get("http://127.0.0.1:8880/api/query?player=true&trcolumns=%25artist%25%20-%20%25title%25")
+	resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/query?player=true&trcolumns=%25artist%25%20-%20%25title%25")
 	if err != nil {
 		return
 	}

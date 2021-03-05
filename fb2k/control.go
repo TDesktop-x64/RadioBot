@@ -29,29 +29,29 @@ func restoreQueue() {
 }
 
 func Play() {
-	http.Post("http://127.0.0.1:8880/api/player/play", "", nil)
+	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/play", "", nil)
 }
 
 func PlayNext() {
-	http.Post("http://127.0.0.1:8880/api/player/next", "", nil)
+	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/next", "", nil)
 }
 
 func PlayRandom() {
-	http.Post("http://127.0.0.1:8880/api/player/play/random", "", nil)
+	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/play/random", "", nil)
 }
 
 func Stop() {
-	http.Post("http://127.0.0.1:8880/api/player/stop", "", nil)
+	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/stop", "", nil)
 }
 
 func Pause() {
-	http.Post("http://127.0.0.1:8880/api/player/pause", "", nil)
+	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/pause", "", nil)
 }
 
 func PlaySelected(selectedIdx int) {
 	rx.Lock()
 	defer rx.Unlock()
-	http.Post("http://127.0.0.1:8880/api/player/play/"+config.GetPlaylistId()+"/"+strconv.Itoa(selectedIdx), "", nil)
+	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/play/"+config.GetPlaylistId()+"/"+strconv.Itoa(selectedIdx), "", nil)
 
 	rList := config.GetStatus().GetRecent()
 	qList := config.GetStatus().GetQueue()

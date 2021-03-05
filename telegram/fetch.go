@@ -39,7 +39,7 @@ type playlistColumn struct {
 }
 
 func getPlaylistItemCount() (string, error) {
-	resp, err := http.Get("http://localhost:8880/api/playlists")
+	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists")
 	if err != nil {
 		return "", errors.New("failed to get api")
 	}
@@ -70,7 +70,7 @@ func savePlaylistIndexAndName() {
 		log.Println(err)
 		return
 	}
-	resp, err := http.Get("http://localhost:8880/api/playlists/" + config.GetPlaylistId() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25")
+	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistId() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25")
 	if err != nil {
 		log.Println("playlist not found...")
 		return

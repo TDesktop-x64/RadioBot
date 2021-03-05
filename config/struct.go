@@ -13,6 +13,7 @@ type Config struct {
 	ChatId       int64  `json:"chat_id"`
 	ChatUsername string `json:"chat_username"`
 	PinnedMsg    int64  `json:"pinned_message"`
+	BeefWebPort  int    `json:"beefweb_port"`
 	PlaylistId   string `json:"playlist_id"`
 	LimitSetting Limit  `json:"limit"`
 	VoteSetting  Vote   `json:"vote"`

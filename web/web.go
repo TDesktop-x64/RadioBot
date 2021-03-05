@@ -2,7 +2,6 @@ package web
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -22,12 +21,6 @@ func StartServer() {
 		return
 	}
 
-	// Check Port format
-	port := config.GetWebPort()
-	if port < 1024 || port > 65535 {
-		log.Fatal("Port range: 1024-65535, but current port is ", port)
-	}
-
 	server = echo.New()
 
 	//server.Use(middleware.Logger())
@@ -37,7 +30,7 @@ func StartServer() {
 	server.POST("/ptcp", recvPtcp)
 	server.POST("/reset", resetPtcps)
 
-	server.Logger.Fatal(server.Start(":" + strconv.Itoa(port)))
+	server.Logger.Fatal(server.Start(":" + strconv.Itoa(config.GetWebPort())))
 }
 
 func hello(c echo.Context) error {

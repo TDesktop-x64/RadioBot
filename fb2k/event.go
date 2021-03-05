@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 	"sync"
 	"time"
 
@@ -39,7 +40,7 @@ func sendNewMessage(cId int64, msgText *tdlib.InputMessageText) {
 
 func GetEvent() {
 	fmt.Println("[Player] Update Event Receiver")
-	client := sse.NewClient("http://127.0.0.1:8880/api/query/updates?player=true&trcolumns=%25artist%25%20-%20%25title%25,%25artist%25,%25title%25,%25album%25")
+	client := sse.NewClient("http://127.0.0.1:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/query/updates?player=true&trcolumns=%25artist%25%20-%20%25title%25,%25artist%25,%25title%25,%25album%25")
 
 	client.Subscribe("messages", func(msg *sse.Event) {
 		data := string(msg.Data)
