@@ -13,7 +13,13 @@ import (
 	"github.com/c0re100/RadioBot/wrtc"
 )
 
+var (
+	version = "1.0.1"
+)
+
 func main() {
+	fmt.Printf("RadioBot v%v\n", version)
+
 	ch := make(chan os.Signal, 2)
 	signal.Notify(ch, os.Interrupt, syscall.SIGINT)
 	signal.Notify(ch, os.Interrupt, syscall.SIGKILL)
