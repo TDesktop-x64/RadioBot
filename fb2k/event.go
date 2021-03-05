@@ -34,7 +34,7 @@ func sendNewMessage(cId int64, msgText *tdlib.InputMessageText) {
 	}
 	bot.PinChatMessage(cId, m.Id, true, false)
 	bot.DeleteMessages(cId, []int64{m.Id + 1048576}, true)
-	config.SetChatId(m.Id)
+	config.SetPinnedMessage(m.Id)
 	config.SaveConfig()
 }
 
