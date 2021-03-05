@@ -22,6 +22,7 @@ func StartServer() {
 	}
 
 	server = echo.New()
+	server.HideBanner = true
 
 	//server.Use(middleware.Logger())
 	server.Use(middleware.Recover())
