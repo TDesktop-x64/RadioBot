@@ -11,7 +11,7 @@ import (
 	"github.com/c0re100/go-tdlib"
 )
 
-func JoinGroupCall() {
+func joinGroupCall() {
 	c, _ := userBot.GetChat(config.GetChatId())
 	gc, _ := userBot.GetGroupCall(c.VoiceChatGroupCallId)
 	grpStatus.vcId = gc.Id
@@ -82,7 +82,7 @@ func newGroupCallPtcpUpdate() {
 				if uId == userBotId && wrtc.GetConnection().ConnectionState().String() != "closed" {
 					time.Sleep(1 * time.Second)
 					log.Println("Userbot left voice chat...re-join now!")
-					JoinGroupCall()
+					joinGroupCall()
 				}
 				RemovePtcp(uId)
 			}

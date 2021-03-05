@@ -38,7 +38,7 @@ func sendNewMessage(cId int64, msgText *tdlib.InputMessageText) {
 	config.SaveConfig()
 }
 
-func GetEvent() {
+func getEvent() {
 	fmt.Println("[Player] Update Event Receiver")
 	client := sse.NewClient("http://127.0.0.1:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/query/updates?player=true&trcolumns=%25artist%25%20-%20%25title%25,%25artist%25,%25title%25,%25album%25")
 

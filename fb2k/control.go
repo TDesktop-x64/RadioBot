@@ -19,7 +19,7 @@ var (
 func New(client *tdlib.Client) {
 	bot = client
 	restoreQueue()
-	GetEvent()
+	getEvent()
 }
 
 func restoreQueue() {

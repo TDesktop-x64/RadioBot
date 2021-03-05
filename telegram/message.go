@@ -18,7 +18,7 @@ func newMessages() {
 			updateMsg := (newMsg).(*tdlib.UpdateNewMessage)
 			chatId := updateMsg.Message.ChatId
 			msgId := updateMsg.Message.Id
-			senderId := GetSenderId(updateMsg.Message.Sender)
+			senderId := getSenderId(updateMsg.Message.Sender)
 			var msgText string
 			var msgEnt []tdlib.TextEntity
 
@@ -32,7 +32,7 @@ func newMessages() {
 				bot.DeleteMessages(chatId, []int64{msgId}, true)
 			}
 
-			command := CheckCommand(msgText, msgEnt)
+			command := checkCommand(msgText, msgEnt)
 			switch command {
 			case "/request":
 				sendButtonMessage(chatId, msgId)
@@ -41,7 +41,7 @@ func newMessages() {
 			case "/skip":
 				startVote(chatId, msgId, int32(senderId))
 			case "/search", "/nom":
-				nominate(chatId, msgId, int32(senderId), CommandArgument(msgText))
+				nominate(chatId, msgId, int32(senderId), commandArgument(msgText))
 			case "/play":
 				playerControl(chatId, int32(senderId), 0)
 			case "/stop":

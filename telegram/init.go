@@ -43,7 +43,7 @@ func New() (*tdlib.Client, *tdlib.Client) {
 	}
 
 	savePlaylistIndexAndName()
-	Receiver()
+	createReceiver()
 
 	return bot, userBot
 }
@@ -134,13 +134,13 @@ func userLogin() error {
 	return nil
 }
 
-func Receiver() {
+func createReceiver() {
 	go newMessages()
 	go callbackQuery()
 	if !config.IsWebEnabled() {
 		go newGroupCallUpdate()
 		go newGroupCallPtcpUpdate()
-		JoinGroupCall()
+		joinGroupCall()
 	}
 }
 

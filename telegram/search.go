@@ -91,7 +91,7 @@ func editCustomButtonMessage(chatId int64, m *tdlib.Message, queryId tdlib.JSONI
 		switch m2.Content.GetMessageContentEnum() {
 		case "messageText":
 			msgText := m2.Content.(*tdlib.MessageText).Text.Text
-			list := searchSong(CommandArgument(msgText))
+			list := searchSong(commandArgument(msgText))
 			songKb := createSearchSongListButton(list, offset)
 			kb := finalizeButton(songKb, offset, true)
 			bot.EditMessageText(chatId, m.Id, kb, text)
