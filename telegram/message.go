@@ -16,9 +16,9 @@ func newMessages() {
 	for newMsg := range receiver.Chan {
 		go func(newMsg tdlib.TdMessage) {
 			updateMsg := (newMsg).(*tdlib.UpdateNewMessage)
-			chatId := updateMsg.Message.ChatId
-			msgId := updateMsg.Message.Id
-			senderId := getSenderId(updateMsg.Message.Sender)
+			chatID := updateMsg.Message.ChatId
+			msgID := updateMsg.Message.Id
+			senderID := getSenderID(updateMsg.Message.Sender)
 			var msgText string
 			var msgEnt []tdlib.TextEntity
 
@@ -27,33 +27,33 @@ func newMessages() {
 				msgText = updateMsg.Message.Content.(*tdlib.MessageText).Text.Text
 				msgEnt = updateMsg.Message.Content.(*tdlib.MessageText).Text.Entities
 			case "messageChatJoinByLink":
-				bot.DeleteMessages(chatId, []int64{msgId}, true)
+				bot.DeleteMessages(chatID, []int64{msgID}, true)
 			case "messageChatAddMembers", "messageChatDeleteMember":
-				bot.DeleteMessages(chatId, []int64{msgId}, true)
+				bot.DeleteMessages(chatID, []int64{msgID}, true)
 			}
 
 			command := checkCommand(msgText, msgEnt)
 			switch command {
 			case "/request":
-				sendButtonMessage(chatId, msgId)
+				sendButtonMessage(chatID, msgID)
 			case "/current":
-				getCurrentPlaying(chatId, msgId)
+				getCurrentPlaying(chatID, msgID)
 			case "/skip":
-				startVote(chatId, msgId, int32(senderId))
+				startVote(chatID, msgID, int32(senderID))
 			case "/search", "/nom":
-				nominate(chatId, msgId, int32(senderId), commandArgument(msgText))
+				nominate(chatID, msgID, int32(senderID), commandArgument(msgText))
 			case "/play":
-				playerControl(chatId, int32(senderId), 0)
+				playerControl(chatID, int32(senderID), 0)
 			case "/stop":
-				playerControl(chatId, int32(senderId), 1)
+				playerControl(chatID, int32(senderID), 1)
 			case "/pause":
-				playerControl(chatId, int32(senderId), 2)
+				playerControl(chatID, int32(senderID), 2)
 			case "/random":
-				playerControl(chatId, int32(senderId), 3)
+				playerControl(chatID, int32(senderID), 3)
 			case "/reload":
-				reload(chatId, msgId, int32(senderId))
+				reload(chatID, msgID, int32(senderID))
 			case "/loadptcps":
-				loadParticipants(chatId, int32(senderId))
+				loadParticipants(chatID, int32(senderID))
 			}
 		}(newMsg)
 	}

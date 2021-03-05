@@ -26,14 +26,14 @@ func isSameAsCurrent(songName string) bool {
 	return false
 }
 
-func sendNewMessage(cId int64, msgText *tdlib.InputMessageText) {
-	m, newErr := bot.SendMessage(cId, 0, 0, nil, nil, msgText)
+func sendNewMessage(chatID int64, msgText *tdlib.InputMessageText) {
+	m, newErr := bot.SendMessage(chatID, 0, 0, nil, nil, msgText)
 	if newErr != nil {
 		log.Println("[Send] Failed to broadcast current song...", newErr)
 		return
 	}
-	bot.PinChatMessage(cId, m.Id, true, false)
-	bot.DeleteMessages(cId, []int64{m.Id + 1048576}, true)
+	bot.PinChatMessage(chatID, m.Id, true, false)
+	bot.DeleteMessages(chatID, []int64{m.Id + 1048576}, true)
 	config.SetPinnedMessage(m.Id)
 	config.SaveConfig()
 }
@@ -52,7 +52,7 @@ func getEvent() {
 						go func(dur int64) {
 							select {
 							case <-killSwitch:
-								fmt.Printf("Next song monitor: Goroutine #%v killed!\n", getGoId())
+								fmt.Printf("Next song monitor: Goroutine #%v killed!\n", getGoID())
 								return
 							case <-time.After(time.Duration(dur)*time.Second - 500*time.Millisecond):
 								checkNextSong()
@@ -75,17 +75,17 @@ func getEvent() {
 						"Album: %v\n"+
 						"Duration: %v", utils.IsEmpty(artist), utils.IsEmpty(track), utils.IsEmpty(album), utils.SecondsToMinutes(int64(event.Player.ActiveItem.Duration)))
 					msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(text, nil), true, false)
-					cId := config.GetChatId()
-					mId := config.GetPinnedMessage()
+					cID := config.GetChatID()
+					mID := config.GetPinnedMessage()
 
-					if mId == 0 {
-						sendNewMessage(cId, msgText)
+					if mID == 0 {
+						sendNewMessage(cID, msgText)
 					} else {
-						_, getErr := bot.GetMessage(cId, mId)
+						_, getErr := bot.GetMessage(cID, mID)
 						if getErr != nil {
-							sendNewMessage(cId, msgText)
+							sendNewMessage(cID, msgText)
 						} else {
-							_, editErr := bot.EditMessageText(cId, mId, nil, msgText)
+							_, editErr := bot.EditMessageText(cID, mID, nil, msgText)
 							if editErr != nil {
 								log.Println("[Edit] Failed to broadcast current song...", editErr)
 								return

@@ -9,7 +9,8 @@ import (
 	"github.com/pion/webrtc/v2"
 )
 
-func Connect(resp *tdlib.GroupCallJoinResponse, d *data) {
+// Connect connect to group call server
+func Connect(resp *tdlib.GroupCallJoinResponse, d *Data) {
 	rSdp := createOfferSdp(resp, strconv.FormatInt(d.Ssrc, 10))
 	rOffer := webrtc.SessionDescription{
 		Type: webrtc.SDPTypeAnswer,
@@ -34,19 +35,22 @@ func Connect(resp *tdlib.GroupCallJoinResponse, d *data) {
 	}
 }
 
+// Disconnect disconnect all connections
 func Disconnect() {
 	if !config.IsWebEnabled() {
 		closeRTC <- true
-		c, _ := userBot.GetChat(config.GetChatId())
+		c, _ := userBot.GetChat(config.GetChatID())
 		gc, _ := userBot.GetGroupCall(c.VoiceChatGroupCallId)
 		userBot.LeaveGroupCall(gc.Id)
 	}
 }
 
+// GetConnection get peer connection
 func GetConnection() *webrtc.PeerConnection {
 	return peerConnection
 }
 
+// GetCurrentSDP get SDP string
 func GetCurrentSDP() string {
 	if peerConnection.LocalDescription() != nil {
 		return peerConnection.LocalDescription().SDP

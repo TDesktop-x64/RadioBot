@@ -19,8 +19,8 @@ func stopScheduler() {
 	sch.Stop()
 }
 
-func addVoteJob(chatId, msgId int64) {
-	timeLeftJob, err := sch.Every(15).Second().Do(updateVote, chatId, msgId, true)
+func addVoteJob(chatID, msgID int64) {
+	timeLeftJob, err := sch.Every(15).Second().Do(updateVote, chatID, msgID, true)
 	if err != nil {
 		log.Println("error creating job:", err)
 		return

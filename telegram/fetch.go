@@ -53,7 +53,7 @@ func getPlaylistItemCount() (string, error) {
 	var pl playlists
 	if err := json.Unmarshal(body, &pl); err == nil {
 		for _, item := range pl.Playlists {
-			if item.ID == config.GetPlaylistId() {
+			if item.ID == config.GetPlaylistID() {
 				return strconv.Itoa(item.ItemCount), nil
 			}
 		}
@@ -70,7 +70,7 @@ func savePlaylistIndexAndName() {
 		log.Println(err)
 		return
 	}
-	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistId() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25")
+	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistID() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25")
 	if err != nil {
 		log.Println("playlist not found...")
 		return

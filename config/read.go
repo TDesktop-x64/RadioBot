@@ -17,12 +17,13 @@ var (
 	cron   = gocron.NewScheduler(time.UTC)
 )
 
+// Read read config and status JSON
 func Read() {
-	ReadConfig()
-	ReadStatus()
+	readConfig()
+	readStatus()
 }
 
-func ReadConfig() {
+func readConfig() {
 	if err := LoadConfig(); err != nil {
 		log.Fatal(err)
 	}
@@ -33,6 +34,7 @@ func ReadConfig() {
 	utils.CheckPortIsValid("Beefweb", port)
 }
 
+// LoadConfig load config.json to Config
 func LoadConfig() error {
 	b, err := ioutil.ReadFile("config.json")
 	if err != nil {
@@ -51,7 +53,7 @@ func initStatus() {
 	json.Unmarshal(b, &status)
 }
 
-func ReadStatus() {
+func readStatus() {
 	if b, err := ioutil.ReadFile("status.json"); err == nil {
 		e := json.Unmarshal(b, &status)
 		if e != nil {

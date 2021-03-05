@@ -49,9 +49,9 @@ func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch 
 	return tdlib.NewReplyMarkupInlineKeyboard(songKb)
 }
 
-func sendButtonMessage(chatId, msgId int64) {
+func sendButtonMessage(chatID, msgID int64) {
 	var format *tdlib.FormattedText
-	if chatId < 0 {
+	if chatID < 0 {
 		text := "Which song do you want to play?" +
 			"\n\n" +
 			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>"
@@ -62,13 +62,13 @@ func sendButtonMessage(chatId, msgId int64) {
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSongListButton(0)
 	kb := finalizeButton(songKb, 0, false)
-	bot.SendMessage(chatId, 0, msgId, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
+	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
 }
 
-func editButtonMessage(chatId, msgId int64, queryId tdlib.JSONInt64, offset int) {
-	if canSelectPage(chatId, queryId) {
+func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int) {
+	if canSelectPage(chatID, queryID) {
 		var format *tdlib.FormattedText
-		if chatId < 0 {
+		if chatID < 0 {
 			text := "Which song do you want to play?" +
 				"\n\n" +
 				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>"
@@ -79,29 +79,29 @@ func editButtonMessage(chatId, msgId int64, queryId tdlib.JSONInt64, offset int)
 		text := tdlib.NewInputMessageText(format, false, false)
 		songKb := createSongListButton(offset)
 		kb := finalizeButton(songKb, offset, false)
-		bot.EditMessageText(chatId, msgId, kb, text)
+		bot.EditMessageText(chatID, msgID, kb, text)
 	}
 }
 
-func selectSongMessage(userId int32, queryId tdlib.JSONInt64, idx int) {
-	if ok, sec := canReqSong(userId); !ok {
-		bot.AnswerCallbackQuery(queryId, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 59)
+func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
+	if ok, sec := canReqSong(userID); !ok {
+		bot.AnswerCallbackQuery(queryID, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 59)
 		return
 	}
 
 	if songList[idx] == "" {
-		bot.AnswerCallbackQuery(queryId, "This song is not available...", false, "", 180)
+		bot.AnswerCallbackQuery(queryID, "This song is not available...", false, "", 180)
 	} else if len(GetQueue()) >= config.GetQueueLimit() {
-		bot.AnswerCallbackQuery(queryId, "Too many song in request song list now...\nPlease try again later~", false, "", 180)
+		bot.AnswerCallbackQuery(queryID, "Too many song in request song list now...\nPlease try again later~", false, "", 180)
 	} else {
 		if utils.ContainsInt(GetRecent(), idx) {
-			bot.AnswerCallbackQuery(queryId, "Song was recently played!", false, "", 180)
+			bot.AnswerCallbackQuery(queryID, "Song was recently played!", false, "", 180)
 		} else if utils.ContainsInt(GetQueue(), idx) {
-			bot.AnswerCallbackQuery(queryId, "Song was recently requested!", false, "", 180)
+			bot.AnswerCallbackQuery(queryID, "Song was recently requested!", false, "", 180)
 		} else {
 			fb2k.PushQueue(idx)
 			choice := fmt.Sprintf("Your choice: %v | Song queue: %v", songList[idx], len(GetQueue()))
-			bot.AnswerCallbackQuery(queryId, choice, false, "", 180)
+			bot.AnswerCallbackQuery(queryID, choice, false, "", 180)
 		}
 	}
 }

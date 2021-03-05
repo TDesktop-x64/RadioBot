@@ -13,11 +13,12 @@ import (
 
 var (
 	bot       *tdlib.Client
-	botId     int32
+	botID     int32
 	userBot   *tdlib.Client
-	userBotId int32
+	userBotID int32
 )
 
+// New create telegram session
 func New() (*tdlib.Client, *tdlib.Client) {
 	tdlib.SetLogVerbosityLevel(0)
 	tdlib.SetFilePath("./errors.txt")
@@ -50,8 +51,8 @@ func New() (*tdlib.Client, *tdlib.Client) {
 
 func newClient(name string) *tdlib.Client {
 	return tdlib.NewClient(tdlib.Config{
-		APIID:               config.GetApiId(),
-		APIHash:             config.GetApiHash(),
+		APIID:               config.GetAPIID(),
+		APIHash:             config.GetAPIHash(),
 		SystemLanguageCode:  "en",
 		DeviceModel:         "Radio Controller",
 		SystemVersion:       "1.0",
@@ -81,7 +82,7 @@ func botLogin() error {
 			if err != nil {
 				return err
 			}
-			botId = me.Id
+			botID = me.Id
 			fmt.Println(me.Username + " connected.")
 			break
 		}
@@ -125,7 +126,7 @@ func userLogin() error {
 			if err != nil {
 				return err
 			}
-			userBotId = me.Id
+			userBotID = me.Id
 			fmt.Println("\nHello!", me.FirstName, me.LastName, "("+me.Username+")")
 			break
 		}
@@ -145,8 +146,8 @@ func createReceiver() {
 }
 
 func checkGroupIsExist(cl *tdlib.Client) {
-	chatId := config.GetChatId()
-	if chatId == 0 {
+	chatID := config.GetChatID()
+	if chatID == 0 {
 		uName := config.GetChatUsername()
 		if uName == "" {
 			log.Fatal("Username should not empty.")
@@ -159,10 +160,10 @@ func checkGroupIsExist(cl *tdlib.Client) {
 		if err != nil {
 			log.Fatal("GetChat error:", err)
 		}
-		config.SetChatId(s.Id)
+		config.SetChatID(s.Id)
 		config.SaveConfig()
 	} else {
-		_, err := cl.GetChat(config.GetChatId())
+		_, err := cl.GetChat(config.GetChatID())
 		if err != nil {
 			log.Fatal("GetChat error:", err)
 		}

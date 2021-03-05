@@ -17,13 +17,13 @@ func callbackQuery() {
 	for newMsg := range receiver.Chan {
 		go func(newMsg tdlib.TdMessage) {
 			updateMsg := (newMsg).(*tdlib.UpdateNewCallbackQuery)
-			queryId := updateMsg.Id
-			chatId := updateMsg.ChatId
-			userId := updateMsg.SenderUserId
-			msgId := updateMsg.MessageId
+			queryID := updateMsg.Id
+			chatID := updateMsg.ChatId
+			userID := updateMsg.SenderUserId
+			msgID := updateMsg.MessageId
 			data := string(updateMsg.Payload.(*tdlib.CallbackQueryPayloadData).Data)
 
-			m, err := bot.GetMessage(chatId, msgId)
+			m, err := bot.GetMessage(chatID, msgID)
 			if err != nil {
 				return
 			}
@@ -34,16 +34,16 @@ func callbackQuery() {
 
 			switch {
 			case data == "vote_skip":
-				setUserVote(chatId, msgId, userId, queryId)
+				setUserVote(chatID, msgID, userID, queryID)
 			case len(selIdx) == 2:
 				idx, _ := strconv.Atoi(selIdx[1])
-				selectSongMessage(userId, queryId, idx)
+				selectSongMessage(userID, queryID, idx)
 			case len(page) == 2:
 				offset, _ := strconv.Atoi(page[1])
-				editButtonMessage(chatId, msgId, queryId, offset)
+				editButtonMessage(chatID, msgID, queryID, offset)
 			case len(result) == 2:
 				offset, _ := strconv.Atoi(result[1])
-				editCustomButtonMessage(chatId, m, queryId, offset)
+				editCustomButtonMessage(chatID, m, queryID, offset)
 			}
 		}(newMsg)
 	}

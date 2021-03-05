@@ -8,7 +8,8 @@ import (
 	"github.com/pion/webrtc/v2"
 )
 
-type data struct {
+// Data WebRTC data
+type Data struct {
 	UFrag string
 	Pwd   string
 	Port  string
@@ -17,7 +18,7 @@ type data struct {
 	Offer string
 }
 
-func extractDesc(pc *webrtc.PeerConnection, sdp string) *data {
+func extractDesc(pc *webrtc.PeerConnection, sdp string) *Data {
 	var lines []string
 	if sdp != "" {
 		lines = strings.Split(sdp, "\n")
@@ -44,7 +45,7 @@ func extractDesc(pc *webrtc.PeerConnection, sdp string) *data {
 		}
 	}
 
-	return &data{
+	return &Data{
 		UFrag: ufrag,
 		Pwd:   pwd,
 		Port:  port,

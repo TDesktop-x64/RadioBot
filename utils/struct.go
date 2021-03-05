@@ -1,5 +1,6 @@
 package utils
 
+// Event Beefweb JSON struct
 type Event struct {
 	Player struct {
 		ActiveItem struct {

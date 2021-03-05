@@ -12,9 +12,9 @@ import (
 )
 
 func joinGroupCall() {
-	c, _ := userBot.GetChat(config.GetChatId())
+	c, _ := userBot.GetChat(config.GetChatID())
 	gc, _ := userBot.GetGroupCall(c.VoiceChatGroupCallId)
-	grpStatus.vcId = gc.Id
+	grpStatus.vcID = gc.Id
 
 	data := wrtc.CreateOffer(userBot)
 	payload := tdlib.NewGroupCallPayload(data.UFrag, data.Pwd, nil)
@@ -39,9 +39,9 @@ func joinGroupCall() {
 	go wrtc.Connect(gcResp, data)
 }
 
-func loadParticipants(chatId int64, userId int32) {
-	if isAdmin(chatId, userId) {
-		gc, _ := userBot.GetGroupCall(grpStatus.vcId)
+func loadParticipants(chatID int64, userID int32) {
+	if isAdmin(chatID, userID) {
+		gc, _ := userBot.GetGroupCall(grpStatus.vcID)
 		if gc.LoadedAllParticipants {
 			return
 		}
@@ -58,10 +58,10 @@ func newGroupCallUpdate() {
 	receiver := userBot.AddEventReceiver(&tdlib.UpdateGroupCall{}, eventFilter, 100)
 	for newMsg := range receiver.Chan {
 		updateMsg := (newMsg).(*tdlib.UpdateGroupCall)
-		gcId := updateMsg.GroupCall.Id
+		gcID := updateMsg.GroupCall.Id
 		// todo
-		if grpStatus.vcId == gcId && grpStatus.isLoadPtcps && updateMsg.GroupCall.LoadedAllParticipants {
-			finalizeVote(grpStatus.chatId, grpStatus.msgId, updateMsg.GroupCall.ParticipantCount)
+		if grpStatus.vcID == gcID && grpStatus.isLoadPtcps && updateMsg.GroupCall.LoadedAllParticipants {
+			finalizeVote(grpStatus.chatID, grpStatus.msgID, updateMsg.GroupCall.ParticipantCount)
 		}
 	}
 }
@@ -75,40 +75,44 @@ func newGroupCallPtcpUpdate() {
 	receiver := userBot.AddEventReceiver(&tdlib.UpdateGroupCallParticipant{}, eventFilter, 5000)
 	for newMsg := range receiver.Chan {
 		updateMsg := (newMsg).(*tdlib.UpdateGroupCallParticipant)
-		gcId := updateMsg.GroupCallId
-		uId := updateMsg.Participant.UserId
-		if grpStatus.vcId == gcId {
+		gcID := updateMsg.GroupCallId
+		userID := updateMsg.Participant.UserId
+		if grpStatus.vcID == gcID {
 			if updateMsg.Participant.Order == 0 {
-				if uId == userBotId && wrtc.GetConnection().ConnectionState().String() != "closed" {
+				if userID == userBotID && wrtc.GetConnection().ConnectionState().String() != "closed" {
 					time.Sleep(1 * time.Second)
 					log.Println("Userbot left voice chat...re-join now!")
 					joinGroupCall()
 				}
-				RemovePtcp(uId)
+				RemovePtcp(userID)
 			}
-			AddPtcp(uId)
+			AddPtcp(userID)
 		}
 	}
 }
 
-func AddPtcp(userId int32) {
-	if !utils.ContainsInt32(grpStatus.Ptcps, userId) {
+// AddPtcp add user to participant list
+func AddPtcp(userID int32) {
+	if !utils.ContainsInt32(grpStatus.Ptcps, userID) {
 		//log.Printf("User %v joined voice chat.\n", uId)
-		grpStatus.Ptcps = append(grpStatus.Ptcps, userId)
+		grpStatus.Ptcps = append(grpStatus.Ptcps, userID)
 	}
 }
 
-func RemovePtcp(userId int32) {
+// RemovePtcp remove user from participant list
+func RemovePtcp(userID int32) {
 	//log.Printf("User %v left voice chat.\n", uId)
 	grpStatus.Ptcps = utils.FilterInt32(grpStatus.Ptcps, func(s int32) bool {
-		return s != userId
+		return s != userID
 	})
 }
 
+// ResetPtcps reset participant list
 func ResetPtcps() {
 	grpStatus.Ptcps = []int32{}
 }
 
+// GetPtcps get participant list
 func GetPtcps() []int32 {
 	return grpStatus.Ptcps
 }

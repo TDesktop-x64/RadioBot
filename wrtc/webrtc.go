@@ -24,7 +24,8 @@ func setup() {
 	setupMedia()
 }
 
-func CreateOffer(bot *tdlib.Client) *data {
+// CreateOffer Create Local Description
+func CreateOffer(bot *tdlib.Client) *Data {
 	setup()
 	userBot = bot
 

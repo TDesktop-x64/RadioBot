@@ -48,9 +48,9 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 	return songKb
 }
 
-func sendCustomButtonMessage(chatId, msgId int64, list map[int]string) {
+func sendCustomButtonMessage(chatID, msgID int64, list map[int]string) {
 	var format *tdlib.FormattedText
-	if chatId < 0 {
+	if chatID < 0 {
 		text := fmt.Sprintf("Result: %v matches\n"+
 			"Which song do you want to play?\n"+
 			"\n"+
@@ -69,13 +69,13 @@ func sendCustomButtonMessage(chatId, msgId int64, list map[int]string) {
 		kb = tdlib.NewReplyMarkupInlineKeyboard(songKb)
 	}
 
-	bot.SendMessage(chatId, 0, msgId, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
+	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
 }
 
-func editCustomButtonMessage(chatId int64, m *tdlib.Message, queryId tdlib.JSONInt64, offset int) {
-	if canSelectPage(chatId, queryId) {
+func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONInt64, offset int) {
+	if canSelectPage(chatID, queryID) {
 		var format *tdlib.FormattedText
-		if chatId < 0 {
+		if chatID < 0 {
 			text := "Which song do you want to play?" +
 				"\n\n" +
 				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>"
@@ -84,7 +84,7 @@ func editCustomButtonMessage(chatId int64, m *tdlib.Message, queryId tdlib.JSONI
 			format = tdlib.NewFormattedText("Which song do you want to play?", nil)
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
-		m2, err := bot.GetMessage(chatId, m.ReplyToMessageId)
+		m2, err := bot.GetMessage(chatID, m.ReplyToMessageId)
 		if err != nil {
 			return
 		}
@@ -94,7 +94,7 @@ func editCustomButtonMessage(chatId int64, m *tdlib.Message, queryId tdlib.JSONI
 			list := searchSong(commandArgument(msgText))
 			songKb := createSearchSongListButton(list, offset)
 			kb := finalizeButton(songKb, offset, true)
-			bot.EditMessageText(chatId, m.Id, kb, text)
+			bot.EditMessageText(chatID, m.Id, kb, text)
 		}
 	}
 }

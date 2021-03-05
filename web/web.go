@@ -15,6 +15,7 @@ var (
 	server *echo.Echo
 )
 
+// StartServer start http server for vote system
 func StartServer() {
 	if !config.IsWebEnabled() {
 		fmt.Println("Switching to Userbot mode")
@@ -40,28 +41,28 @@ func hello(c echo.Context) error {
 
 func recvPtcp(c echo.Context) error {
 	status := c.FormValue("is_join")
-	userId := c.FormValue("user_id")
+	userID := c.FormValue("user_id")
 
 	if status == "" {
 		return c.HTML(400, "Field `is_join` is empty.")
-	} else if userId == "" {
+	} else if userID == "" {
 		return c.HTML(400, "Field `user_id` is empty.")
 	}
 
-	uId, err := strconv.Atoi(userId)
+	uID, err := strconv.Atoi(userID)
 	if err != nil {
 		return c.HTML(400, "Field `user_id` is empty.")
 	}
 
-	if uId == 0 {
+	if uID == 0 {
 		return c.HTML(400, "Field `user_id` is not accept 0.")
 	}
 
 	if status == "true" {
-		telegram.AddPtcp(int32(uId))
+		telegram.AddPtcp(int32(uID))
 		return c.HTML(200, "User added.")
 	} else if status == "false" {
-		telegram.RemovePtcp(int32(uId))
+		telegram.RemovePtcp(int32(uID))
 		return c.HTML(200, "User removed.")
 	} else {
 		return c.HTML(400, "Field `user_id` is empty or wrong type.")

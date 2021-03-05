@@ -40,7 +40,7 @@ func commandArgument(msgText string) string {
 	return ""
 }
 
-func getSenderId(sender tdlib.MessageSender) int64 {
+func getSenderID(sender tdlib.MessageSender) int64 {
 	if sender.GetMessageSenderEnum() == "messageSenderUser" {
 		return int64(sender.(*tdlib.MessageSenderUser).UserId)
 	}

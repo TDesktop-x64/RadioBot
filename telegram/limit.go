@@ -14,37 +14,37 @@ var (
 	reqLimit  = make(map[int32]*rate.RateLimiter)
 )
 
-func canSelectPage(chatId int64, queryId tdlib.JSONInt64) bool {
-	var cId int32
+func canSelectPage(chatID int64, queryID tdlib.JSONInt64) bool {
+	var cID int32
 
-	if chatId == config.GetChatId() {
-		cId = -1000
-		if pageLimit[cId] == nil {
-			pageLimit[cId] = rate.New(config.GetChatSelectLimit(), 1*time.Minute)
+	if chatID == config.GetChatID() {
+		cID = -1000
+		if pageLimit[cID] == nil {
+			pageLimit[cID] = rate.New(config.GetChatSelectLimit(), 1*time.Minute)
 		}
-	} else if chatId > 0 {
-		cId = int32(chatId)
-		if pageLimit[cId] == nil {
-			pageLimit[cId] = rate.New(config.GetPrivateChatSelectLimit(), 1*time.Minute)
+	} else if chatID > 0 {
+		cID = int32(chatID)
+		if pageLimit[cID] == nil {
+			pageLimit[cID] = rate.New(config.GetPrivateChatSelectLimit(), 1*time.Minute)
 		}
 	} else {
 		return false
 	}
 
-	if ok, dur := pageLimit[cId].Try(); !ok {
+	if ok, dur := pageLimit[cID].Try(); !ok {
 		sec := int32(dur.Seconds())
-		bot.AnswerCallbackQuery(queryId, fmt.Sprintf("Rate limited! Please try again in %v seconds~", sec), false, "", sec)
+		bot.AnswerCallbackQuery(queryID, fmt.Sprintf("Rate limited! Please try again in %v seconds~", sec), false, "", sec)
 		return false
 	}
 	return true
 }
 
-func canReqSong(userId int32) (bool, int) {
-	if reqLimit[userId] != nil {
-		ok, sec := reqLimit[userId].Try()
+func canReqSong(userID int32) (bool, int) {
+	if reqLimit[userID] != nil {
+		ok, sec := reqLimit[userID].Try()
 		return ok, int(sec)
 	}
-	reqLimit[userId] = rate.New(config.GetReqSongLimit(), 1*time.Minute)
-	reqLimit[userId].Try()
+	reqLimit[userID] = rate.New(config.GetReqSongLimit(), 1*time.Minute)
+	reqLimit[userID].Try()
 	return true, 0
 }

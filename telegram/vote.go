@@ -12,9 +12,9 @@ import (
 )
 
 type groupStatus struct {
-	chatId       int64
-	msgId        int64
-	vcId         int32
+	chatID       int64
+	msgID        int64
+	vcID         int32
 	duartion     int32
 	Ptcps        []int32
 	voteSkip     []int32
@@ -24,30 +24,32 @@ type groupStatus struct {
 }
 
 var (
-	grpStatus = &groupStatus{chatId: config.GetChatId()}
+	grpStatus = &groupStatus{chatID: config.GetChatID()}
 )
 
+// GetQueue get queue song list
 func GetQueue() []int {
 	return config.GetStatus().GetQueue()
 }
 
+// GetRecent get recent song list
 func GetRecent() []int {
 	return config.GetStatus().GetRecent()
 }
 
-func startVote(chatId, msgId int64, userId int32) {
-	if chatId != config.GetChatId() {
+func startVote(chatID, msgID int64, userID int32) {
+	if chatID != config.GetChatID() {
 		return
 	}
 
 	if !config.IsVoteEnabled() {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("This group is not allowed to vote.", nil), true, true)
-		bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		return
 	}
 
 	if !config.IsWebEnabled() {
-		c, err := userBot.GetChat(chatId)
+		c, err := userBot.GetChat(chatID)
 		if err != nil {
 			log.Println(err)
 			return
@@ -55,28 +57,28 @@ func startVote(chatId, msgId int64, userId int32) {
 
 		if c.VoiceChatGroupCallId == 0 {
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("This group do not have a voice chat.", nil), true, true)
-			bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 			return
 		}
 		// Preload all users
 		_, _ = userBot.LoadGroupCallParticipants(c.VoiceChatGroupCallId, 5000)
 	}
 
-	if !utils.ContainsInt32(grpStatus.Ptcps, userId) {
+	if !utils.ContainsInt32(grpStatus.Ptcps, userID) {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
-		bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		return
 	}
 
 	if grpStatus.isVoting {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Vote in progress...", nil), true, true)
-		bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		return
 	}
 
 	if time.Now().Unix() < grpStatus.lastVoteTime+config.GetReleaseTime() {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Skip a song was voted too recently...", nil), true, true)
-		bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		return
 	}
 
@@ -87,21 +89,21 @@ func startVote(chatId, msgId int64, userId int32) {
 	})
 
 	msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Skip a song?", nil), true, true)
-	m, err := bot.SendMessage(chatId, 0, msgId, nil, voteKb, msgText)
+	m, err := bot.SendMessage(chatID, 0, msgID, nil, voteKb, msgText)
 	if err != nil {
 		log.Println("Can't send message.")
 		return
 	}
 	grpStatus.isVoting = true
 	grpStatus.duartion = config.GetVoteTime()
-	grpStatus.msgId = m.Id
+	grpStatus.msgID = m.Id
 	grpStatus.lastVoteTime = time.Now().Unix()
 
-	if !utils.ContainsInt32(grpStatus.voteSkip, userId) {
-		grpStatus.voteSkip = append(grpStatus.voteSkip, userId)
+	if !utils.ContainsInt32(grpStatus.voteSkip, userID) {
+		grpStatus.voteSkip = append(grpStatus.voteSkip, userID)
 	}
-	updateVote(chatId, m.Id, false)
-	addVoteJob(chatId, m.Id)
+	updateVote(chatID, m.Id, false)
+	addVoteJob(chatID, m.Id)
 	// Wait 15 seconds
 	time.Sleep(15 * time.Second)
 	if !sch.IsRunning() {
@@ -110,12 +112,12 @@ func startVote(chatId, msgId int64, userId int32) {
 	}
 }
 
-func updateVote(chatId, msgId int64, isAuto bool) {
+func updateVote(chatID, msgID int64, isAuto bool) {
 	if isAuto {
 		grpStatus.duartion -= config.GetUpdateTime()
 	}
 	if grpStatus.duartion <= 0 {
-		endVote(chatId, msgId)
+		endVote(chatID, msgID)
 		return
 	}
 	voteKb := tdlib.NewReplyMarkupInlineKeyboard([][]tdlib.InlineKeyboardButton{
@@ -127,7 +129,7 @@ func updateVote(chatId, msgId int64, isAuto bool) {
 	msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(fmt.Sprintf("Skip a song?\n"+
 		"Vote count: %v\n"+
 		"Vote timeleft: %v second(s)", len(grpStatus.voteSkip), grpStatus.duartion), nil), true, true)
-	bot.EditMessageText(chatId, msgId, voteKb, msgText)
+	bot.EditMessageText(chatID, msgID, voteKb, msgText)
 }
 
 func resetVote() {
@@ -137,7 +139,7 @@ func resetVote() {
 	grpStatus.voteSkip = []int32{}
 }
 
-func finalizeVote(chatId, msgId int64, ptcpCount int32) {
+func finalizeVote(chatID, msgID int64, ptcpCount int32) {
 	percentage := float64(len(grpStatus.voteSkip)) / float64(ptcpCount) * 100
 
 	status := "Failed"
@@ -149,7 +151,7 @@ func finalizeVote(chatId, msgId int64, ptcpCount int32) {
 		"Vote count: %v\n"+
 		"Vote Ended!\n\n"+
 		"Status: %v", len(grpStatus.voteSkip), status), nil), true, true)
-	bot.EditMessageText(chatId, msgId, nil, msgText)
+	bot.EditMessageText(chatID, msgID, nil, msgText)
 
 	resetVote()
 	if status == "Succeed" {
@@ -162,16 +164,16 @@ func finalizeVote(chatId, msgId int64, ptcpCount int32) {
 	}
 }
 
-func endVote(chatId, msgId int64) {
+func endVote(chatID, msgID int64) {
 	vs := grpStatus
 	msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(fmt.Sprintf("Skip a song?\n"+
 		"Vote count: %v\n"+
 		"Vote Ended!\n\n"+
 		"Status: Generating vote results...", len(vs.voteSkip)), nil), true, true)
-	bot.EditMessageText(chatId, vs.msgId, nil, msgText)
+	bot.EditMessageText(chatID, vs.msgID, nil, msgText)
 
 	if !config.IsWebEnabled() {
-		c, err := userBot.GetChat(chatId)
+		c, err := userBot.GetChat(chatID)
 		if err != nil {
 			resetVote()
 			log.Println(err)
@@ -188,42 +190,43 @@ func endVote(chatId, msgId int64) {
 			log.Println(err)
 			return
 		}
-		finalizeVote(chatId, msgId, vc.ParticipantCount)
+		finalizeVote(chatID, msgID, vc.ParticipantCount)
 	} else {
-		finalizeVote(chatId, msgId, int32(len(grpStatus.Ptcps)))
+		finalizeVote(chatID, msgID, int32(len(grpStatus.Ptcps)))
 	}
 }
 
-func setUserVote(chatId, msgId int64, userId int32, queryId tdlib.JSONInt64) {
+func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
 	if config.IsJoinNeeded() {
-		cm, err := bot.GetChatMember(config.GetChatId(), userId)
+		cm, err := bot.GetChatMember(config.GetChatID(), userID)
 		if err != nil {
-			bot.AnswerCallbackQuery(queryId, "Failed to fetch chat info! Please try again later~", true, "", 10)
+			bot.AnswerCallbackQuery(queryID, "Failed to fetch chat info! Please try again later~", true, "", 10)
 			return
 		}
 
 		if cm.Status.GetChatMemberStatusEnum() == "chatMemberStatusLeft" {
-			bot.AnswerCallbackQuery(queryId, "Only users which are in the group can vote!", true, "", 10)
+			bot.AnswerCallbackQuery(queryID, "Only users which are in the group can vote!", true, "", 10)
 			return
 		}
 	}
 
-	if utils.ContainsInt32(grpStatus.voteSkip, userId) {
-		bot.AnswerCallbackQuery(queryId, "You're already vote!", false, "", 45)
+	if utils.ContainsInt32(grpStatus.voteSkip, userID) {
+		bot.AnswerCallbackQuery(queryID, "You're already vote!", false, "", 45)
 		return
 	}
 
 	if config.IsPtcpsOnly() {
-		bot.AnswerCallbackQuery(queryId, "Only users which are in a voice chat can vote!", false, "", 5)
+		bot.AnswerCallbackQuery(queryID, "Only users which are in a voice chat can vote!", false, "", 5)
 		return
 	}
 
-	AddVote(userId)
-	updateVote(chatId, msgId, false)
+	AddVote(userID)
+	updateVote(chatID, msgID, false)
 }
 
-func AddVote(userId int32) {
-	if !utils.ContainsInt32(grpStatus.voteSkip, userId) {
-		grpStatus.voteSkip = append(grpStatus.voteSkip, userId)
+// AddVote add user to vote list
+func AddVote(userID int32) {
+	if !utils.ContainsInt32(grpStatus.voteSkip, userID) {
+		grpStatus.voteSkip = append(grpStatus.voteSkip, userID)
 	}
 }

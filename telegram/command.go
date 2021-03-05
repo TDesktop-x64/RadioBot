@@ -13,7 +13,7 @@ import (
 	"github.com/c0re100/go-tdlib"
 )
 
-func getCurrentPlaying(chatId, msgId int64) {
+func getCurrentPlaying(chatID, msgID int64) {
 	resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/query?player=true&trcolumns=%25artist%25%20-%20%25title%25")
 	if err != nil {
 		return
@@ -30,34 +30,34 @@ func getCurrentPlaying(chatId, msgId int64) {
 		if len(event.Player.ActiveItem.Columns) >= 1 {
 			songName := event.Player.ActiveItem.Columns[0]
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Now playing: \n"+songName, nil), true, false)
-			bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		}
 	}
 }
 
-func nominate(chatId, msgId int64, userId int32, arg string) {
+func nominate(chatID, msgID int64, userID int32, arg string) {
 	if arg == "" {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track name or Artist name is empty.", nil), true, false)
-		bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		return
 	}
 
-	if ok, sec := canReqSong(userId); !ok {
+	if ok, sec := canReqSong(userID); !ok {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(fmt.Sprintf("Please try again in %v seconds.", sec), nil), true, false)
-		bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 	} else {
 		list := searchSong(arg)
 		if len(list) > 0 {
-			sendCustomButtonMessage(chatId, msgId, list)
+			sendCustomButtonMessage(chatID, msgID, list)
 		} else {
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
-			bot.SendMessage(chatId, 0, msgId, nil, nil, msgText)
+			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		}
 	}
 }
 
-func isAdmin(chatId int64, userId int32) bool {
-	u, err := bot.GetChatMember(chatId, userId)
+func isAdmin(chatID int64, userID int32) bool {
+	u, err := bot.GetChatMember(chatID, userID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return false
@@ -70,17 +70,17 @@ func isAdmin(chatId int64, userId int32) bool {
 	return false
 }
 
-func reload(chatId, msgId int64, userId int32) {
-	if isAdmin(chatId, userId) {
+func reload(chatID, msgID int64, userID int32) {
+	if isAdmin(chatID, userID) {
 		config.LoadConfig()
 		savePlaylistIndexAndName()
 		text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
-		bot.SendMessage(chatId, 0, msgId, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
 	}
 }
 
-func playerControl(chatId int64, userId int32, cs int) {
-	if isAdmin(chatId, userId) {
+func playerControl(chatID int64, userID int32, cs int) {
+	if isAdmin(chatID, userID) {
 		switch cs {
 		case 0:
 			fb2k.Play()
