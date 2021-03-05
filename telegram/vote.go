@@ -81,7 +81,7 @@ func startVote(chatId, msgId int64, userId int32) {
 	}
 
 	voteKb := tdlib.NewReplyMarkupInlineKeyboard([][]tdlib.InlineKeyboardButton{
-		[]tdlib.InlineKeyboardButton{
+		{
 			*tdlib.NewInlineKeyboardButton("Yes - 1", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("vote_skip"))),
 		},
 	})
@@ -119,7 +119,7 @@ func updateVote(chatId, msgId int64, isAuto bool) {
 		return
 	}
 	voteKb := tdlib.NewReplyMarkupInlineKeyboard([][]tdlib.InlineKeyboardButton{
-		[]tdlib.InlineKeyboardButton{
+		{
 			*tdlib.NewInlineKeyboardButton(fmt.Sprintf("Yes - %v", len(grpStatus.voteSkip)), tdlib.NewInlineKeyboardButtonTypeCallback([]byte("vote_skip"))),
 		},
 	})

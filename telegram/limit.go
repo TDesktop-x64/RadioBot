@@ -43,9 +43,8 @@ func canReqSong(userId int32) (bool, int) {
 	if reqLimit[userId] != nil {
 		ok, sec := reqLimit[userId].Try()
 		return ok, int(sec)
-	} else {
-		reqLimit[userId] = rate.New(config.GetReqSongLimit(), 1*time.Minute)
-		reqLimit[userId].Try()
-		return true, 0
 	}
+	reqLimit[userId] = rate.New(config.GetReqSongLimit(), 1*time.Minute)
+	reqLimit[userId].Try()
+	return true, 0
 }

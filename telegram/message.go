@@ -33,26 +33,26 @@ func newMessages() {
 			}
 
 			command := CheckCommand(msgText, msgEnt)
-			switch {
-			case command == "/request":
+			switch command {
+			case "/request":
 				sendButtonMessage(chatId, msgId)
-			case command == "/current":
+			case "/current":
 				getCurrentPlaying(chatId, msgId)
-			case command == "/skip":
+			case "/skip":
 				startVote(chatId, msgId, int32(senderId))
-			case command == "/search" || command == "/nom":
+			case "/search", "/nom":
 				nominate(chatId, msgId, int32(senderId), CommandArgument(msgText))
-			case command == "/play":
+			case "/play":
 				playerControl(chatId, int32(senderId), 0)
-			case command == "/stop":
+			case "/stop":
 				playerControl(chatId, int32(senderId), 1)
-			case command == "/pause":
+			case "/pause":
 				playerControl(chatId, int32(senderId), 2)
-			case command == "/random":
+			case "/random":
 				playerControl(chatId, int32(senderId), 3)
-			case command == "/reload":
+			case "/reload":
 				reload(chatId, msgId, int32(senderId))
-			case command == "/loadptcps":
+			case "/loadptcps":
 				loadParticipants(chatId, int32(senderId))
 			}
 		}(newMsg)
