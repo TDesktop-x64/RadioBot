@@ -23,7 +23,7 @@ func main() {
 	go func() {
 		<-ch
 		config.Save()
-		wrtc.Disconnnect()
+		wrtc.Disconnect()
 		fmt.Println("Shutdown...")
 		os.Exit(0)
 	}()

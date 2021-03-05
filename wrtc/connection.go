@@ -34,7 +34,7 @@ func Connect(resp *tdlib.GroupCallJoinResponse, d *data) {
 	}
 }
 
-func Disconnnect() {
+func Disconnect() {
 	if !config.IsWebEnabled() {
 		closeRTC <- true
 		c, _ := userBot.GetChat(config.GetChatId())
