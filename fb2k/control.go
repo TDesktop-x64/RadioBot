@@ -62,19 +62,19 @@ func PlaySelected(selectedIdx int) {
 	http.Post("http://127.0.0.1:"+strconv.Itoa(config.GetBeefWebPort())+"/api/player/play/"+config.GetPlaylistID()+"/"+strconv.Itoa(selectedIdx), "", nil)
 
 	rList := config.GetStatus().GetRecent()
-	qList := config.GetStatus().GetQueue()
-
 	recent := append(rList, selectedIdx)
 	config.SetRecentSong(recent)
-	queue := append(qList[:0], qList[1:]...)
-	config.SetQueueSong(queue)
-
 	if len(recent) >= config.GetRecentLimit() {
 		recent = append(recent[:0], recent[1:]...)
 		config.SetRecentSong(recent)
 	}
 
-	config.SaveStatus()
+	qList := config.GetStatus().GetQueue()
+	if len(qList) == 0 {
+		return
+	}
+	queue := append(qList[:0], qList[1:]...)
+	config.SetQueueSong(queue)
 }
 
 // PushQueue push selected song to queue channel
@@ -91,8 +91,6 @@ func PushQueue(selectedIdx int) {
 		queue = append(queue[:0], queue[1:]...)
 		config.SetQueueSong(queue)
 	}
-
-	config.SaveStatus()
 }
 
 func checkNextSong() {
