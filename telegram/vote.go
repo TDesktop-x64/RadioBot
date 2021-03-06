@@ -64,10 +64,12 @@ func startVote(chatID, msgID int64, userID int32) {
 		_, _ = userBot.LoadGroupCallParticipants(c.VoiceChatGroupCallId, 5000)
 	}
 
-	if !utils.ContainsInt32(grpStatus.Ptcps, userID) {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
-		return
+	if config.IsPtcpsOnly() {
+		if !utils.ContainsInt32(grpStatus.Ptcps, userID) {
+			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
+			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+			return
+		}
 	}
 
 	if grpStatus.isVoting {
@@ -98,14 +100,15 @@ func startVote(chatID, msgID int64, userID int32) {
 	grpStatus.duartion = config.GetVoteTime()
 	grpStatus.msgID = m.Id
 	grpStatus.lastVoteTime = time.Now().Unix()
+	updateTime := config.GetUpdateTime()
 
 	if !utils.ContainsInt32(grpStatus.voteSkip, userID) {
 		grpStatus.voteSkip = append(grpStatus.voteSkip, userID)
 	}
 	updateVote(chatID, m.Id, false)
-	addVoteJob(chatID, m.Id)
-	// Wait 15 seconds
-	time.Sleep(15 * time.Second)
+	addVoteJob(chatID, m.Id, updateTime)
+	// Wait N seconds
+	time.Sleep(time.Duration(updateTime) * time.Second)
 	if !sch.IsRunning() {
 		log.Println("Starting scheduler...")
 		startScheduler()
@@ -133,6 +136,7 @@ func updateVote(chatID, msgID int64, isAuto bool) {
 }
 
 func resetVote() {
+	sch.RemoveByTag("timeleft")
 	grpStatus.isLoadPtcps = false
 	grpStatus.isVoting = false
 	grpStatus.duartion = 0

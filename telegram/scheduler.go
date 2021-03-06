@@ -19,13 +19,13 @@ func stopScheduler() {
 	sch.Stop()
 }
 
-func addVoteJob(chatID, msgID int64) {
-	timeLeftJob, err := sch.Every(15).Second().Do(updateVote, chatID, msgID, true)
+func addVoteJob(chatID, msgID int64, updateTime int32) {
+	timeLeftJob, err := sch.Every(int(updateTime)).Second().Do(updateVote, chatID, msgID, true)
 	if err != nil {
 		log.Println("error creating job:", err)
 		return
 	}
-	timeLeftJob.LimitRunsTo(3)
+	timeLeftJob.Tag("timeleft")
 	timeLeftJob.RemoveAfterLastRun()
 }
 
