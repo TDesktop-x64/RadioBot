@@ -106,9 +106,9 @@ func startVote(chatID, msgID int64, userID int32) {
 		grpStatus.voteSkip = append(grpStatus.voteSkip, userID)
 	}
 	updateVote(chatID, m.Id, false)
-	addVoteJob(chatID, m.Id, updateTime)
 	// Wait N seconds
 	time.Sleep(time.Duration(updateTime) * time.Second)
+	addVoteJob(chatID, m.Id, updateTime)
 	if !sch.IsRunning() {
 		log.Println("Starting scheduler...")
 		startScheduler()
