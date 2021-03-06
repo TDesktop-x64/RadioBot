@@ -42,7 +42,7 @@ func canSelectPage(chatID int64, queryID tdlib.JSONInt64) bool {
 func canReqSong(userID int32) (bool, int) {
 	if reqLimit[userID] != nil {
 		ok, sec := reqLimit[userID].Try()
-		return ok, int(sec)
+		return ok, int(sec.Seconds())
 	}
 	reqLimit[userID] = rate.New(config.GetReqSongLimit(), 1*time.Minute)
 	reqLimit[userID].Try()
