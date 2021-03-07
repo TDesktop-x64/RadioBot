@@ -42,17 +42,12 @@ func nominate(chatID, msgID int64, userID int32, arg string) {
 		return
 	}
 
-	if ok, sec := canReqSong(userID); !ok {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(fmt.Sprintf("Please try again in %v seconds.", sec), nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+	list := searchSong(arg)
+	if len(list) > 0 {
+		sendCustomButtonMessage(chatID, msgID, list)
 	} else {
-		list := searchSong(arg)
-		if len(list) > 0 {
-			sendCustomButtonMessage(chatID, msgID, list)
-		} else {
-			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
-			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
-		}
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 	}
 }
 
