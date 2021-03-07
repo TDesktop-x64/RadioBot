@@ -71,7 +71,7 @@ func isAdmin(chatID int64, userID int32) bool {
 }
 
 func reload(chatID, msgID int64, userID int32) {
-	if isAdmin(chatID, userID) {
+	if isAdmin(config.GetChatID(), userID) {
 		config.LoadConfig()
 		savePlaylistIndexAndName()
 		text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
