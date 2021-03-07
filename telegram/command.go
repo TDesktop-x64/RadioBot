@@ -66,27 +66,31 @@ func isAdmin(chatID int64, userID int32) bool {
 }
 
 func reload(chatID, msgID int64, userID int32) {
-	if isAdmin(config.GetChatID(), userID) {
-		config.LoadConfig()
-		savePlaylistIndexAndName()
-		text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+	if chatID == config.GetChatID() || chatID > 0 {
+		if isAdmin(config.GetChatID(), userID) {
+			config.LoadConfig()
+			savePlaylistIndexAndName()
+			text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
+			bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+		}
 	}
 }
 
 func playerControl(chatID int64, userID int32, cs int) {
-	if isAdmin(chatID, userID) {
-		switch cs {
-		case 0:
-			fb2k.Play()
-		case 1:
-			fb2k.Stop()
-		case 2:
-			fb2k.Pause()
-		case 3:
-			fb2k.PlayRandom()
-		default:
+	if chatID == config.GetChatID() || chatID > 0 {
+		if isAdmin(config.GetChatID(), userID) {
+			switch cs {
+			case 0:
+				fb2k.Play()
+			case 1:
+				fb2k.Stop()
+			case 2:
+				fb2k.Pause()
+			case 3:
+				fb2k.PlayRandom()
+			default:
 
+			}
 		}
 	}
 }
