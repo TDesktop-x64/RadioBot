@@ -107,6 +107,11 @@ func GetVoteTime() int32 {
 	return config.VoteSetting.VoteTime
 }
 
+// SetVoteTime update the vote time
+func SetVoteTime(value int32) {
+	config.VoteSetting.VoteTime = value
+}
+
 // GetReleaseTime get lock the vote seconds after vote ended
 func GetReleaseTime() int64 {
 	return config.VoteSetting.ReleaseTime
@@ -115,6 +120,11 @@ func GetReleaseTime() int64 {
 // GetUpdateTime get vote update time
 func GetUpdateTime() int32 {
 	return config.VoteSetting.UpdateTime
+}
+
+// SetUpdateTime update the vote update time
+func SetUpdateTime(value int32) {
+	config.VoteSetting.UpdateTime = value
 }
 
 // IsJoinNeeded return true if only users which are in the group can vote
@@ -134,7 +144,7 @@ func GetWebPort() int {
 
 func compareUpdateVoteTime() {
 	if GetUpdateTime() > GetVoteTime() {
-		config.VoteSetting.UpdateTime = config.VoteSetting.VoteTime
+		SetUpdateTime(GetVoteTime())
 		log.Println("'update_time' is greater than 'vote_time' is not allowed.\n" +
 			"Applying same setting to 'update_time'.")
 	}
@@ -142,7 +152,7 @@ func compareUpdateVoteTime() {
 
 func checkVoteTimeIsTooSmall() {
 	if GetVoteTime() < 5 {
-		config.VoteSetting.VoteTime = 5
+		SetVoteTime(5)
 		log.Println("'vote_time' is smaller than 5s is not allowed.\n" +
 			"Value increased to 5s")
 	}
@@ -150,7 +160,7 @@ func checkVoteTimeIsTooSmall() {
 
 func checkUpdateTimeIsTooSmall() {
 	if GetUpdateTime() < 5 {
-		config.VoteSetting.UpdateTime = 5
+		SetUpdateTime(5)
 		log.Println("'update_time' is smaller than 5s is not allowed.\n" +
 			"Value increased to 5s")
 	}
