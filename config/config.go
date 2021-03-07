@@ -1,5 +1,7 @@
 package config
 
+import "log"
+
 // GetConfig get current config
 func GetConfig() Config {
 	return config
@@ -128,4 +130,12 @@ func IsWebEnabled() bool {
 // GetWebPort get web port
 func GetWebPort() int {
 	return config.WebSetting.Port
+}
+
+func compareUpdateVoteTime() {
+	if GetUpdateTime() > GetVoteTime() {
+		config.VoteSetting.UpdateTime = config.VoteSetting.VoteTime
+		log.Println("'update_time' is greater than 'vote_time' is not allowed.\n" +
+			"Applying same setting to 'update_time'.")
+	}
 }

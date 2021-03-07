@@ -32,6 +32,8 @@ func readConfig() {
 	utils.CheckPortIsValid("Web Server", port)
 	port = GetBeefWebPort()
 	utils.CheckPortIsValid("Beefweb", port)
+	// Check setting is valid
+	compareUpdateVoteTime()
 }
 
 // LoadConfig load config.json to Config
