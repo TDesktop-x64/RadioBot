@@ -34,6 +34,8 @@ func readConfig() {
 	utils.CheckPortIsValid("Beefweb", port)
 	// Check setting is valid
 	compareUpdateVoteTime()
+	checkVoteTimeIsTooSmall()
+	checkUpdateTimeIsTooSmall()
 }
 
 // LoadConfig load config.json to Config

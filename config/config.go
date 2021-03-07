@@ -139,3 +139,19 @@ func compareUpdateVoteTime() {
 			"Applying same setting to 'update_time'.")
 	}
 }
+
+func checkVoteTimeIsTooSmall() {
+	if GetVoteTime() < 5 {
+		config.VoteSetting.VoteTime = 5
+		log.Println("'vote_time' is smaller than 5s is not allowed.\n" +
+			"Value increased to 5s")
+	}
+}
+
+func checkUpdateTimeIsTooSmall() {
+	if GetUpdateTime() < 5 {
+		config.VoteSetting.UpdateTime = 5
+		log.Println("'update_time' is smaller than 5s is not allowed.\n" +
+			"Value increased to 5s")
+	}
+}
