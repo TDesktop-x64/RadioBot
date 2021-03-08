@@ -35,22 +35,6 @@ func getCurrentPlaying(chatID, msgID int64) {
 	}
 }
 
-func nominate(chatID, msgID int64, userID int32, arg string) {
-	if arg == "" {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track name or Artist name is empty.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
-		return
-	}
-
-	list := searchSong(arg)
-	if len(list) > 0 {
-		sendCustomButtonMessage(chatID, msgID, list)
-	} else {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
-	}
-}
-
 func isAdmin(chatID int64, userID int32) bool {
 	u, err := bot.GetChatMember(chatID, userID)
 	if err != nil {
@@ -94,3 +78,4 @@ func playerControl(chatID int64, userID int32, cs int) {
 		}
 	}
 }
+

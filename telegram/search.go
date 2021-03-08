@@ -98,3 +98,19 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 		}
 	}
 }
+
+func nominate(chatID, msgID int64, userID int32, arg string) {
+	if arg == "" {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track name or Artist name is empty.", nil), true, false)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		return
+	}
+
+	list := searchSong(arg)
+	if len(list) > 0 {
+		sendCustomButtonMessage(chatID, msgID, list)
+	} else {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+	}
+}
