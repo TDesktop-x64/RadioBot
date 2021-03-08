@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -79,3 +80,21 @@ func playerControl(chatID int64, userID int32, cs int) {
 	}
 }
 
+func checkQueueSong(chatID, msgID int64) {
+	if len(GetQueue()) > 0 {
+		list := "Current queue:\n"
+		for i, idx := range GetQueue() {
+			list += fmt.Sprintf("<b>%v</b>. <code>%v</code>\n", i+1, songList[idx])
+		}
+		format, err := bot.ParseTextEntities(list, tdlib.NewTextParseModeHTML())
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		text := tdlib.NewInputMessageText(format, false, false)
+		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+	} else {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No queue song.", nil), true, false)
+		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, msgText)
+	}
+}
