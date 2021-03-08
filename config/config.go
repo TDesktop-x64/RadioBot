@@ -144,9 +144,9 @@ func GetWebPort() int {
 
 func compareUpdateVoteTime() {
 	if GetUpdateTime() > GetVoteTime() {
-		SetUpdateTime(GetVoteTime())
+		SetUpdateTime(5)
 		log.Println("'update_time' is greater than 'vote_time' is not allowed.\n" +
-			"Applying same setting to 'update_time'.")
+			"Applying default value(5s) to 'update_time'.")
 	}
 }
 
