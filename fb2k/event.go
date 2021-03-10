@@ -52,7 +52,7 @@ func getEvent() {
 						go func(dur int64) {
 							select {
 							case <-killSwitch:
-								fmt.Printf("Next song monitor: Goroutine #%v killed!\n", getGoID())
+								fmt.Printf("Song change by vote: Goroutine #%v killed!\n", getGoID())
 								return
 							case <-time.After(time.Duration(dur)*time.Second - 500*time.Millisecond):
 								checkNextSong()
