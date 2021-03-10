@@ -103,7 +103,7 @@ func checkNextSong() {
 
 // SetKillSwitch set kill switch to kill goroutine
 func SetKillSwitch() {
-	killSwitch <- true
+	skipSwitch <- true
 }
 
 func getGoID() int {

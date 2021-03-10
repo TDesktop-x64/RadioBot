@@ -16,7 +16,7 @@ import (
 
 var (
 	rx         sync.Mutex
-	killSwitch = make(chan bool, 1)
+	skipSwitch = make(chan bool, 1)
 )
 
 func isSameAsCurrent(songName string) bool {
@@ -42,6 +42,9 @@ func getEvent() {
 	fmt.Println("[Player] Update Event Receiver")
 	client := sse.NewClient("http://127.0.0.1:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/query/updates?player=true&trcolumns=%25artist%25%20-%20%25title%25,%25artist%25,%25title%25,%25album%25")
 
+	routine := []int{}
+	manualKill := make(chan bool, 1)
+
 	client.Subscribe("messages", func(msg *sse.Event) {
 		data := string(msg.Data)
 		if data != "{}" {
@@ -50,13 +53,27 @@ func getEvent() {
 				if len(event.Player.ActiveItem.Columns) >= 1 {
 					defer func() {
 						go func(dur int64) {
+							rID := getGoID()
+							routine = append(routine, rID)
+							if len(routine) > 1 {
+								manualKill <- true
+							}
+
 							select {
-							case <-killSwitch:
-								fmt.Printf("Song change by vote: Goroutine #%v killed!\n", getGoID())
+							case <-manualKill:
+								if routine[0] == rID && len(routine) > 1 {
+									routine = append(routine[:0], routine[1:]...)
+									fmt.Printf("Song change by manually: Goroutine #%v killed!\n", rID)
+									return
+								}
+							case <-skipSwitch:
+								routine = append(routine[:0], routine[1:]...)
+								fmt.Printf("Song change by vote: Goroutine #%v killed!\n", rID)
 								return
 							case <-time.After(time.Duration(dur)*time.Second - 500*time.Millisecond):
 								checkNextSong()
 							}
+							routine = append(routine[:0], routine[1:]...)
 						}(int64(event.Player.ActiveItem.Duration - event.Player.ActiveItem.Position))
 					}()
 
