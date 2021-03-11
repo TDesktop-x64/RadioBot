@@ -21,6 +21,7 @@ Basically, request, skip and search a song are supported now.
 * `/request` Request a song with inline button menu.
 * `/skip` Start a poll to skip current song.
 * `/search <name>` or `/nom <name>` Search a song with track name or artist.
+* `/queue` Check song queue list.
 
 #### Admin
 
