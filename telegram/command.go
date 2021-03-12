@@ -58,7 +58,11 @@ func reload(chatID, msgID int64, userID int32) {
 				bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
 				return
 			}
-			savePlaylistIndexAndName()
+			if err := savePlaylistIndexAndName(); err != nil {
+				text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Playlist reload failed...\n"+err.Error(), nil), false, false)
+				bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+				return
+			}
 			resetRateLimiter()
 			text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
 			bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)

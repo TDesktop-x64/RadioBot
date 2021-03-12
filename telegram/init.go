@@ -43,7 +43,9 @@ func New() (*tdlib.Client, *tdlib.Client) {
 		checkGroupIsExist(userBot)
 	}
 
-	savePlaylistIndexAndName()
+	if listErr := savePlaylistIndexAndName(); listErr != nil {
+		log.Println(listErr)
+	}
 	createReceiver()
 
 	return bot, userBot

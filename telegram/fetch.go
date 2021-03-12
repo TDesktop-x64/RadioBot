@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -62,7 +61,7 @@ func getPlaylistItemCount() (string, error) {
 	return "", errors.New("failed to parse api response")
 }
 
-func savePlaylistIndexAndName() {
+func savePlaylistIndexAndName() error {
 	if songList != nil {
 		songList = make(map[int]string)
 	}
@@ -70,20 +69,17 @@ func savePlaylistIndexAndName() {
 	mutex.Lock()
 	count, err := getPlaylistItemCount()
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistID() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25")
 	if err != nil {
-		log.Println("playlist not found...")
-		return
+		return errors.New("playlist not found")
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("failed to read playlist response...")
-		return
+		return errors.New("failed to read playlist response")
 	}
 
 	var plc playlistColumn
@@ -94,4 +90,5 @@ func savePlaylistIndexAndName() {
 			}
 		}
 	}
+	return nil
 }
