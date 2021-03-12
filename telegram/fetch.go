@@ -41,7 +41,9 @@ type playlistColumn struct {
 func checkPlayerIsActive() {
 	_, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/player")
 	if err != nil {
-		log.Fatal("foobar2000/DeaDBeeF is not running?\n", err)
+		log.Fatal("BeefWeb is not running?\n",
+			"If you're first time to use RadioBot, please read the documentation from this page.\n" +
+			"https://github.com/c0re100/RadioBot#quick-start")
 	}
 }
 
