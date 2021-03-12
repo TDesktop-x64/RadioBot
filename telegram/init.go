@@ -20,6 +20,8 @@ var (
 
 // New create telegram session
 func New() (*tdlib.Client, *tdlib.Client) {
+	checkPlayerIsActive() // Check music player is running
+
 	tdlib.SetLogVerbosityLevel(0)
 	tdlib.SetFilePath("./errors.txt")
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -35,6 +36,13 @@ type playlistColumn struct {
 		Offset     int `json:"offset"`
 		TotalCount int `json:"totalCount"`
 	} `json:"playlistItems"`
+}
+
+func checkPlayerIsActive() {
+	_, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/player")
+	if err != nil {
+		log.Fatal("foobar2000/DeaDBeeF is not running?\n", err)
+	}
 }
 
 func getPlaylistItemCount() (string, error) {
