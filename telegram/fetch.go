@@ -63,6 +63,9 @@ func getPlaylistItemCount() (string, error) {
 }
 
 func savePlaylistIndexAndName() {
+	if songList != nil {
+		songList = make(map[int]string)
+	}
 	defer mutex.Unlock()
 	mutex.Lock()
 	count, err := getPlaylistItemCount()
