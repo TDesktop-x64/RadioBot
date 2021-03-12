@@ -53,7 +53,11 @@ func isAdmin(chatID int64, userID int32) bool {
 func reload(chatID, msgID int64, userID int32) {
 	if chatID == config.GetChatID() || chatID > 0 {
 		if isAdmin(config.GetChatID(), userID) {
-			config.LoadConfig()
+			if err := config.LoadConfig(); err != nil {
+				text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config reload failed...\n"+err.Error(), nil), false, false)
+				bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+				return
+			}
 			savePlaylistIndexAndName()
 			resetRateLimiter()
 			text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
