@@ -11,7 +11,7 @@ import (
 	"github.com/c0re100/RadioBot/config"
 	"github.com/c0re100/RadioBot/utils"
 	"github.com/c0re100/go-tdlib"
-	"github.com/r3labs/sse"
+	"github.com/r3labs/sse/v2"
 )
 
 var (
