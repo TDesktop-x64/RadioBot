@@ -101,8 +101,8 @@ go build
 | -------------------- | ------- | -------------------------------------------------------------- |
 | `enable`             | Boolean | If true, user can start a vote to skip current song.           |
 |                      |         | Default: true                                                  |
-| `vote_time`          | Integer | Vote time, Default: 45s                                        |
-| `update_time`        | Integer | Update vote status each n seconds, Default: 15s                |
+| `vote_time`          | Integer | Vote time, Default: 45s / Minimum: 5s                          |
+| `update_time`        | Integer | Update vote status each n seconds, Default: 15s / Minimum: 5s  |
 | `release_time`       | Integer | Lock the vote n seconds after vote ended, Default: 600s        |
 | `percent_of_success` | Float64 | Success percentage, Default: 40%                               |
 | `participants_only`  | Boolean | If true, only participants which are in a voice chat can vote! |
