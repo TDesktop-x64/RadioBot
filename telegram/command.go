@@ -55,6 +55,7 @@ func reload(chatID, msgID int64, userID int32) {
 		if isAdmin(config.GetChatID(), userID) {
 			config.LoadConfig()
 			savePlaylistIndexAndName()
+			resetRateLimiter()
 			text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
 			bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
 		}

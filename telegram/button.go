@@ -85,7 +85,7 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int)
 
 func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 	if ok, sec := canReqSong(userID); !ok {
-		bot.AnswerCallbackQuery(queryID, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 59)
+		bot.AnswerCallbackQuery(queryID, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 10)
 		return
 	}
 
