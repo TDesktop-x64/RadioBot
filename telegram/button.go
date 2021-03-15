@@ -84,11 +84,6 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int)
 }
 
 func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
-	if ok, sec := canReqSong(userID); !ok {
-		bot.AnswerCallbackQuery(queryID, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 10)
-		return
-	}
-
 	if songList[idx] == "" {
 		bot.AnswerCallbackQuery(queryID, "This song is not available...", false, "", 180)
 	} else if len(GetQueue()) >= config.GetQueueLimit() {
@@ -99,6 +94,11 @@ func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 		} else if utils.ContainsInt(GetQueue(), idx) {
 			bot.AnswerCallbackQuery(queryID, "Song was recently requested!", false, "", 180)
 		} else {
+			if ok, sec := canReqSong(userID); !ok {
+				bot.AnswerCallbackQuery(queryID, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 10)
+				return
+			}
+			
 			fb2k.PushQueue(idx)
 			choice := fmt.Sprintf("Your choice: %v | Song queue: %v", songList[idx], len(GetQueue()))
 			bot.AnswerCallbackQuery(queryID, choice, false, "", 180)
