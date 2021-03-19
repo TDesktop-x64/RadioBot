@@ -35,6 +35,18 @@ func callbackQuery() {
 			switch {
 			case data == "vote_skip":
 				setUserVote(chatID, msgID, userID, queryID)
+			case data == "refresh_config":
+				configMenu(chatID, msgID, userID, true)
+			case data == "reload_config":
+				reloadConfig(queryID, userID)
+			case data == "reload_playlist":
+				reloadPlaylist(queryID, userID)
+			case data == "vote_change":
+				voteOptionControl(chatID, msgID, userID, 0)
+			case data == "ptcp_change":
+				voteOptionControl(chatID, msgID, userID, 1)
+			case data == "join_change":
+				voteOptionControl(chatID, msgID, userID, 2)
 			case len(selIdx) == 2:
 				idx, _ := strconv.Atoi(selIdx[1])
 				selectSongMessage(userID, queryID, idx)

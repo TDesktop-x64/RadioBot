@@ -34,6 +34,8 @@ func newMessages() {
 
 			command := checkCommand(msgText, msgEnt)
 			switch command {
+			case "/config":
+				configMenu(chatID, msgID, int32(senderID), false)
 			case "/request":
 				sendButtonMessage(chatID, msgID)
 			case "/current":
@@ -54,6 +56,26 @@ func newMessages() {
 				playerControl(chatID, int32(senderID), 3)
 			case "/reload":
 				reload(chatID, msgID, int32(senderID))
+			case "/chat_select_limit":
+				optionControl(chatID, msgID, int32(senderID), 0, commandArgument(msgText))
+			case "/private_select_limit":
+				optionControl(chatID, msgID, int32(senderID), 1, commandArgument(msgText))
+			case "/row_limit":
+				optionControl(chatID, msgID, int32(senderID), 2, commandArgument(msgText))
+			case "/queue_limit":
+				optionControl(chatID, msgID, int32(senderID), 3, commandArgument(msgText))
+			case "/recent_limit":
+				optionControl(chatID, msgID, int32(senderID), 4, commandArgument(msgText))
+			case "/request_song_per_minute":
+				optionControl(chatID, msgID, int32(senderID), 5, commandArgument(msgText))
+			case "/vote_time":
+				optionControl(chatID, msgID, int32(senderID), 6, commandArgument(msgText))
+			case "/update_time":
+				optionControl(chatID, msgID, int32(senderID), 7, commandArgument(msgText))
+			case "/release_time":
+				optionControl(chatID, msgID, int32(senderID), 8, commandArgument(msgText))
+			case "/percent_of_success":
+				optionControl(chatID, msgID, int32(senderID), 9, commandArgument(msgText))
 			case "/loadptcps":
 				loadParticipants(chatID, int32(senderID))
 			}

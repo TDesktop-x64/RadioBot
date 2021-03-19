@@ -57,9 +57,19 @@ func GetPlaylistID() string {
 	return config.PlaylistId
 }
 
+// SetChatSelectLimit set select limit of group chat
+func SetChatSelectLimit(value int) {
+	config.LimitSetting.ChatSelectLimit = value
+}
+
 // GetChatSelectLimit get select limit of group chat
 func GetChatSelectLimit() int {
 	return config.LimitSetting.ChatSelectLimit
+}
+
+// SetPrivateChatSelectLimit set select limit of private chat
+func SetPrivateChatSelectLimit(value int) {
+	config.LimitSetting.PriSelectLimit = value
 }
 
 // GetPrivateChatSelectLimit get select limit of private chat
@@ -67,9 +77,19 @@ func GetPrivateChatSelectLimit() int {
 	return config.LimitSetting.PriSelectLimit
 }
 
+// SetRowLimit set row limit
+func SetRowLimit(value int) {
+	config.LimitSetting.RowLimit = value
+}
+
 // GetRowLimit get row limit
 func GetRowLimit() int {
 	return config.LimitSetting.RowLimit
+}
+
+// SetQueueLimit set queue song limit
+func SetQueueLimit(value int) {
+	config.LimitSetting.QueueLimit = value
 }
 
 // GetQueueLimit get queue song limit
@@ -77,9 +97,19 @@ func GetQueueLimit() int {
 	return config.LimitSetting.QueueLimit
 }
 
+// SetRecentLimit set recent song limit
+func SetRecentLimit(value int) {
+	config.LimitSetting.RecentLimit = value
+}
+
 // GetRecentLimit get recent song limit
 func GetRecentLimit() int {
 	return config.LimitSetting.RecentLimit
+}
+
+// SetReqSongLimit set request song limit
+func SetReqSongLimit(value int) {
+	config.LimitSetting.ReqSongPerMin = value
 }
 
 // GetReqSongLimit get request song limit
@@ -92,9 +122,24 @@ func IsVoteEnabled() bool {
 	return config.VoteSetting.Enable
 }
 
+// SetVoteEnable set vote on or off
+func SetVoteEnable(value bool) {
+	config.VoteSetting.Enable = value
+}
+
+// SetSuccessRate set vote success rate
+func SetSuccessRate(value float64) {
+	config.VoteSetting.PctOfSuccess = value
+}
+
 // GetSuccessRate get vote success rate
 func GetSuccessRate() float64 {
 	return config.VoteSetting.PctOfSuccess
+}
+
+// SetPtcpEnable update participants only
+func SetPtcpEnable(value bool) {
+	config.VoteSetting.PtcpsOnly = value
 }
 
 // IsPtcpsOnly return true if only participants which are in a voice chat can vote
@@ -102,14 +147,19 @@ func IsPtcpsOnly() bool {
 	return config.VoteSetting.PtcpsOnly
 }
 
+// SetVoteTime update the vote time
+func SetVoteTime(value int32) {
+	config.VoteSetting.VoteTime = value
+}
+
 // GetVoteTime get vote time
 func GetVoteTime() int32 {
 	return config.VoteSetting.VoteTime
 }
 
-// SetVoteTime update the vote time
-func SetVoteTime(value int32) {
-	config.VoteSetting.VoteTime = value
+// SetReleaseTime set lock the vote seconds after vote ended
+func SetReleaseTime(value int64) {
+	config.VoteSetting.ReleaseTime = value
 }
 
 // GetReleaseTime get lock the vote seconds after vote ended
@@ -117,19 +167,24 @@ func GetReleaseTime() int64 {
 	return config.VoteSetting.ReleaseTime
 }
 
-// GetUpdateTime get vote update time
-func GetUpdateTime() int32 {
-	return config.VoteSetting.UpdateTime
-}
-
 // SetUpdateTime update the vote update time
 func SetUpdateTime(value int32) {
 	config.VoteSetting.UpdateTime = value
 }
 
+// GetUpdateTime get vote update time
+func GetUpdateTime() int32 {
+	return config.VoteSetting.UpdateTime
+}
+
 // IsJoinNeeded return true if only users which are in the group can vote
 func IsJoinNeeded() bool {
 	return config.VoteSetting.UserMustJoin
+}
+
+// SetJoinEnable update user must join
+func SetJoinEnable(value bool) {
+	config.VoteSetting.UserMustJoin = value
 }
 
 // IsWebEnabled return true if userbot mode is disabled
