@@ -50,26 +50,6 @@ func isAdmin(chatID int64, userID int32) bool {
 	return false
 }
 
-func reload(chatID, msgID int64, userID int32) {
-	if chatID == config.GetChatID() || chatID > 0 {
-		if isAdmin(config.GetChatID(), userID) {
-			if err := config.LoadConfig(); err != nil {
-				text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config reload failed...\n"+err.Error(), nil), false, false)
-				bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
-				return
-			}
-			if err := savePlaylistIndexAndName(); err != nil {
-				text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Playlist reload failed...\n"+err.Error(), nil), false, false)
-				bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
-				return
-			}
-			resetRateLimiter()
-			text := tdlib.NewInputMessageText(tdlib.NewFormattedText("Config&Playlist reloaded!", nil), false, false)
-			bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
-		}
-	}
-}
-
 func playerControl(chatID int64, userID int32, cs int) {
 	if chatID == config.GetChatID() || chatID > 0 {
 		if isAdmin(config.GetChatID(), userID) {

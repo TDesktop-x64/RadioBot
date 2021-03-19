@@ -54,8 +54,6 @@ func newMessages() {
 				playerControl(chatID, int32(senderID), 2)
 			case "/random":
 				playerControl(chatID, int32(senderID), 3)
-			case "/reload":
-				reload(chatID, msgID, int32(senderID))
 			case "/chat_select_limit":
 				optionControl(chatID, msgID, int32(senderID), 0, commandArgument(msgText))
 			case "/private_select_limit":
