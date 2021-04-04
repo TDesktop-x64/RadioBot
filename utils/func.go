@@ -41,9 +41,19 @@ func ContainsInt32(s []int32, v int32) bool {
 	return false
 }
 
-// FilterInt32 make new []int32 without specific value
-func FilterInt32(s []int32, cb func(s int32) bool) []int32 {
-	results := []int32{}
+// ContainsString check value is contains []string
+func ContainsString(s []string, v string) bool {
+	for _, vv := range s {
+		if vv == v {
+			return true
+		}
+	}
+	return false
+}
+
+// FilterString make new []int32 without specific value
+func FilterString(s []string, cb func(s string) bool) []string {
+	results := []string{}
 
 	for _, i := range s {
 		result := cb(i)

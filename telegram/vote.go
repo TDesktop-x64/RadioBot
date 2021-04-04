@@ -1,8 +1,11 @@
 package telegram
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/c0re100/RadioBot/config"
@@ -16,7 +19,7 @@ type groupStatus struct {
 	msgID        int64
 	vcID         int32
 	duartion     int32
-	Ptcps        []int32
+	Ptcps        []string
 	voteSkip     []int32
 	isVoting     bool
 	isLoadPtcps  bool
@@ -35,6 +38,13 @@ func GetQueue() []int {
 // GetRecent get recent song list
 func GetRecent() []int {
 	return config.GetStatus().GetRecent()
+}
+
+func getUserIDHash(uID int32) string {
+	h := sha1.New()
+	h.Write([]byte(strconv.FormatInt(int64(uID), 10)))
+	bs := h.Sum(nil)
+	return hex.EncodeToString(bs)
 }
 
 func startVote(chatID, msgID int64, userID int32) {
@@ -64,8 +74,9 @@ func startVote(chatID, msgID int64, userID int32) {
 		_, _ = userBot.LoadGroupCallParticipants(c.VoiceChatGroupCallId, 5000)
 	}
 
+	hashedID := getUserIDHash(userID)
 	if config.IsPtcpsOnly() {
-		if !utils.ContainsInt32(grpStatus.Ptcps, userID) {
+		if !utils.ContainsString(grpStatus.Ptcps, hashedID) {
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
 			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 			return

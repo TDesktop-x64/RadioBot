@@ -78,41 +78,42 @@ func newGroupCallPtcpUpdate() {
 		gcID := updateMsg.GroupCallId
 		userID := updateMsg.Participant.UserId
 		if grpStatus.vcID == gcID {
+			hashedID := getUserIDHash(userID)
 			if updateMsg.Participant.Order == 0 {
 				if userID == userBotID && wrtc.GetConnection().ConnectionState().String() != "closed" {
 					time.Sleep(1 * time.Second)
 					log.Println("Userbot left voice chat...re-join now!")
 					joinGroupCall()
 				}
-				RemovePtcp(userID)
+				RemovePtcp(hashedID)
 			}
-			AddPtcp(userID)
+			AddPtcp(hashedID)
 		}
 	}
 }
 
 // AddPtcp add user to participant list
-func AddPtcp(userID int32) {
-	if !utils.ContainsInt32(grpStatus.Ptcps, userID) {
+func AddPtcp(hashedID string) {
+	if !utils.ContainsString(grpStatus.Ptcps, hashedID) {
 		//log.Printf("User %v joined voice chat.\n", uId)
-		grpStatus.Ptcps = append(grpStatus.Ptcps, userID)
+		grpStatus.Ptcps = append(grpStatus.Ptcps, hashedID)
 	}
 }
 
 // RemovePtcp remove user from participant list
-func RemovePtcp(userID int32) {
+func RemovePtcp(hashedID string) {
 	//log.Printf("User %v left voice chat.\n", uId)
-	grpStatus.Ptcps = utils.FilterInt32(grpStatus.Ptcps, func(s int32) bool {
-		return s != userID
+	grpStatus.Ptcps = utils.FilterString(grpStatus.Ptcps, func(s string) bool {
+		return s != hashedID
 	})
 }
 
 // ResetPtcps reset participant list
 func ResetPtcps() {
-	grpStatus.Ptcps = []int32{}
+	grpStatus.Ptcps = []string{}
 }
 
 // GetPtcps get participant list
-func GetPtcps() []int32 {
+func GetPtcps() []string {
 	return grpStatus.Ptcps
 }
