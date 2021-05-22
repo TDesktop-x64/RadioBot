@@ -18,7 +18,8 @@ func createSongListButton(offset int) [][]tdlib.InlineKeyboardButton {
 		if songList[i] == "" {
 			continue
 		}
-		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(songList[i], tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+strconv.Itoa(i))))})
+		idx := strconv.Itoa(i)
+		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(idx, tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+idx)))})
 	}
 	mutex.Unlock()
 
@@ -51,13 +52,21 @@ func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch 
 
 func sendButtonMessage(chatID, msgID int64) {
 	var format *tdlib.FormattedText
+	var sList string
+	for i := 0; i < 0+config.GetRowLimit(); i++ {
+		sList = fmt.Sprintf("%v\n" +
+			"<b>%v</b>. <code>%v</code>", sList, i, songList[i])
+	}
 	if chatID < 0 {
-		text := "Which song do you want to play?" +
+		text := fmt.Sprintf("Which song do you want to play?" +
 			"\n\n" +
-			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>"
+			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n" +
+			"%v", sList)
 		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	} else {
-		format = tdlib.NewFormattedText("Which song do you want to play?", nil)
+		text := fmt.Sprintf("Which song do you want to play?\n" +
+			"%v", sList)
+		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSongListButton(0)
@@ -68,13 +77,21 @@ func sendButtonMessage(chatID, msgID int64) {
 func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int) {
 	if canSelectPage(chatID, queryID) {
 		var format *tdlib.FormattedText
+		var sList string
+		for i := offset; i < offset+config.GetRowLimit(); i++ {
+			sList = fmt.Sprintf("%v\n" +
+				"<b>%v</b>. <code>%v</code>", sList, i, songList[i])
+		}
 		if chatID < 0 {
-			text := "Which song do you want to play?" +
+			text := fmt.Sprintf("Which song do you want to play?" +
 				"\n\n" +
-				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>"
+				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n" +
+				"%v", sList)
 			format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 		} else {
-			format = tdlib.NewFormattedText("Which song do you want to play?", nil)
+			text := fmt.Sprintf("Which song do you want to play?\n" +
+				"%v", sList)
+			format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
 		songKb := createSongListButton(offset)

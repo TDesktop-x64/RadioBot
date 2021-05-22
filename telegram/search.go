@@ -41,7 +41,8 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 		if list[k] == "" {
 			continue
 		}
-		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(list[k], tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+strconv.Itoa(k))))})
+		idx := strconv.Itoa(k)
+		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(idx, tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+idx)))})
 		count++
 	}
 
@@ -50,14 +51,39 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 
 func sendCustomButtonMessage(chatID, msgID int64, list map[int]string) {
 	var format *tdlib.FormattedText
+	var sList string
+	var keys []int
+
+	for k := range list {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	fmt.Println(keys)
+
+	for i := 0; i < config.GetRowLimit(); i++ {
+		if keys == nil {
+			break
+		}
+		if len(keys) == i {
+			break
+		}
+		fmt.Println(keys[i])
+		sList = fmt.Sprintf("%v\n"+
+			"<b>%v</b>. <code>%v</code>", sList, keys[i], list[keys[i]])
+	}
+
 	if chatID < 0 {
 		text := fmt.Sprintf("Result: %v matches\n"+
 			"Which song do you want to play?\n"+
 			"\n"+
-			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>", len(list))
+			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n"+
+			"%v", len(list), sList)
 		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	} else {
-		format = tdlib.NewFormattedText(fmt.Sprintf("Result: %v matches\nWhich song do you want to play?", len(list)), nil)
+		text := fmt.Sprintf("Result: %v matches\n"+
+			"Which song do you want to play?\n"+
+			"%v", len(list), sList)
+		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSearchSongListButton(list, 0)
@@ -74,16 +100,6 @@ func sendCustomButtonMessage(chatID, msgID int64, list map[int]string) {
 
 func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONInt64, offset int) {
 	if canSelectPage(chatID, queryID) {
-		var format *tdlib.FormattedText
-		if chatID < 0 {
-			text := "Which song do you want to play?" +
-				"\n\n" +
-				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>"
-			format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
-		} else {
-			format = tdlib.NewFormattedText("Which song do you want to play?", nil)
-		}
-		text := tdlib.NewInputMessageText(format, false, false)
 		m2, err := bot.GetMessage(chatID, m.ReplyToMessageId)
 		if err != nil {
 			return
@@ -92,6 +108,41 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 		case "messageText":
 			msgText := m2.Content.(*tdlib.MessageText).Text.Text
 			list := searchSong(commandArgument(msgText))
+
+			var format *tdlib.FormattedText
+			var sList string
+			var keys []int
+
+			for k := range list {
+				keys = append(keys, k)
+			}
+			sort.Ints(keys)
+
+			for i := offset; i < offset+config.GetRowLimit(); i++ {
+				if keys == nil {
+					break
+				}
+				if len(keys) == i {
+					break
+				}
+				sList = fmt.Sprintf("%v\n"+
+					"<b>%v</b>. <code>%v</code>", sList, keys[i], list[keys[i]])
+			}
+
+			if chatID < 0 {
+				text := fmt.Sprintf("Result: %v matches\n"+
+					"Which song do you want to play?\n"+
+					"\n"+
+					"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n"+
+					"%v", len(list), sList)
+				format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
+			} else {
+				text := fmt.Sprintf("Result: %v matches\n"+
+					"Which song do you want to play?\n"+
+					"%v", len(list), sList)
+				format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
+			}
+			text := tdlib.NewInputMessageText(format, false, false)
 			songKb := createSearchSongListButton(list, offset)
 			kb := finalizeButton(songKb, offset, true)
 			bot.EditMessageText(chatID, m.Id, kb, text)
