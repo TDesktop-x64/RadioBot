@@ -51,38 +51,18 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 
 func sendCustomButtonMessage(chatID, msgID int64, list map[int]string) {
 	var format *tdlib.FormattedText
-	var sList string
-	var keys []int
-
-	for k := range list {
-		keys = append(keys, k)
-	}
-	sort.Ints(keys)
-	fmt.Println(keys)
-
-	for i := 0; i < config.GetRowLimit(); i++ {
-		if keys == nil {
-			break
-		}
-		if len(keys) == i {
-			break
-		}
-		fmt.Println(keys[i])
-		sList = fmt.Sprintf("%v\n"+
-			"<b>%v</b>. <code>%v</code>", sList, keys[i], list[keys[i]])
-	}
-
+	rList := createResultList(list, 0)
 	if chatID < 0 {
 		text := fmt.Sprintf("Result: %v matches\n"+
 			"Which song do you want to play?\n"+
 			"\n"+
 			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n"+
-			"%v", len(list), sList)
+			"%v", len(list), rList)
 		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	} else {
 		text := fmt.Sprintf("Result: %v matches\n"+
 			"Which song do you want to play?\n"+
-			"%v", len(list), sList)
+			"%v", len(list), rList)
 		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
@@ -108,38 +88,20 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 		case "messageText":
 			msgText := m2.Content.(*tdlib.MessageText).Text.Text
 			list := searchSong(commandArgument(msgText))
+			rList := createResultList(list, offset)
 
 			var format *tdlib.FormattedText
-			var sList string
-			var keys []int
-
-			for k := range list {
-				keys = append(keys, k)
-			}
-			sort.Ints(keys)
-
-			for i := offset; i < offset+config.GetRowLimit(); i++ {
-				if keys == nil {
-					break
-				}
-				if len(keys) == i {
-					break
-				}
-				sList = fmt.Sprintf("%v\n"+
-					"<b>%v</b>. <code>%v</code>", sList, keys[i], list[keys[i]])
-			}
-
 			if chatID < 0 {
 				text := fmt.Sprintf("Result: %v matches\n"+
 					"Which song do you want to play?\n"+
 					"\n"+
 					"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n"+
-					"%v", len(list), sList)
+					"%v", len(list), rList)
 				format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 			} else {
 				text := fmt.Sprintf("Result: %v matches\n"+
 					"Which song do you want to play?\n"+
-					"%v", len(list), sList)
+					"%v", len(list), rList)
 				format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 			}
 			text := tdlib.NewInputMessageText(format, false, false)

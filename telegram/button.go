@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/c0re100/RadioBot/config"
@@ -24,6 +25,29 @@ func createSongListButton(offset int) [][]tdlib.InlineKeyboardButton {
 	mutex.Unlock()
 
 	return songKb
+}
+
+func createResultList(list map[int]string, offset int) string {
+	var rList string
+	var keys []int
+
+	for k := range list {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+
+	for i := offset; i < offset+config.GetRowLimit(); i++ {
+		if keys == nil {
+			break
+		}
+		if len(keys) == i {
+			break
+		}
+		rList = fmt.Sprintf("%v\n"+
+			"<b>%v</b>. <code>%v</code>", rList, keys[i], list[keys[i]])
+	}
+
+	return rList
 }
 
 func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch bool) *tdlib.ReplyMarkupInlineKeyboard {
@@ -52,20 +76,16 @@ func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch 
 
 func sendButtonMessage(chatID, msgID int64) {
 	var format *tdlib.FormattedText
-	var sList string
-	for i := 0; i < 0+config.GetRowLimit(); i++ {
-		sList = fmt.Sprintf("%v\n" +
-			"<b>%v</b>. <code>%v</code>", sList, i, songList[i])
-	}
+	rList := createResultList(songList, 0)
 	if chatID < 0 {
-		text := fmt.Sprintf("Which song do you want to play?" +
-			"\n\n" +
-			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n" +
-			"%v", sList)
+		text := fmt.Sprintf("Which song do you want to play?"+
+			"\n\n"+
+			"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n"+
+			"%v", rList)
 		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	} else {
-		text := fmt.Sprintf("Which song do you want to play?\n" +
-			"%v", sList)
+		text := fmt.Sprintf("Which song do you want to play?\n"+
+			"%v", rList)
 		format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
@@ -77,20 +97,16 @@ func sendButtonMessage(chatID, msgID int64) {
 func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int) {
 	if canSelectPage(chatID, queryID) {
 		var format *tdlib.FormattedText
-		var sList string
-		for i := offset; i < offset+config.GetRowLimit(); i++ {
-			sList = fmt.Sprintf("%v\n" +
-				"<b>%v</b>. <code>%v</code>", sList, i, songList[i])
-		}
+		rList := createResultList(songList, offset)
 		if chatID < 0 {
-			text := fmt.Sprintf("Which song do you want to play?" +
-				"\n\n" +
-				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n" +
-				"%v", sList)
+			text := fmt.Sprintf("Which song do you want to play?"+
+				"\n\n"+
+				"<b>Use Private Chat to request a song WHEN you exceeded rate-limit.</b>\n"+
+				"%v", rList)
 			format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 		} else {
-			text := fmt.Sprintf("Which song do you want to play?\n" +
-				"%v", sList)
+			text := fmt.Sprintf("Which song do you want to play?\n"+
+				"%v", rList)
 			format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
@@ -115,7 +131,7 @@ func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 				bot.AnswerCallbackQuery(queryID, fmt.Sprintf("You're already requested recently, Please try again in %v seconds...", sec), false, "", 10)
 				return
 			}
-			
+
 			fb2k.PushQueue(idx)
 			choice := fmt.Sprintf("Your choice: %v | Song queue: %v", songList[idx], len(GetQueue()))
 			bot.AnswerCallbackQuery(queryID, choice, false, "", 180)
