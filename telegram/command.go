@@ -87,3 +87,20 @@ func checkQueueSong(chatID, msgID int64) {
 		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, msgText)
 	}
 }
+
+func checkLatestSong(chatID, msgID int64, offset int) {
+	list := "Recently added:\n"
+	for i := offset; i < offset+30; i++ {
+		if songList[i] == "" {
+			continue
+		}
+		list += fmt.Sprintf("<b>%v</b>. <code>%v</code>\n", i, songList[i])
+	}
+	format, err := bot.ParseTextEntities(list, tdlib.NewTextParseModeHTML())
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	text := tdlib.NewInputMessageText(format, false, false)
+	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+}
