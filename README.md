@@ -3,6 +3,12 @@
 [![GitHub release](https://img.shields.io/github/v/release/c0re100/RadioBot.svg)](https://github.com/c0re100/RadioBot/releases/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
+***
+### Development branch
+### Code may change frequently
+### It's not suitable for production :)
+***
+
 An experimental bot for controlling your TDesktop-x64(with Radio mode) music streaming session.
 
 [TDesktop-x64](https://github.com/TDesktop-x64) Radio mode is an experimental feature for streaming music through voice
@@ -22,6 +28,7 @@ Basically, request, skip and search a song are supported now.
 * `/skip` Start a poll to skip current song.
 * `/search <name>` or `/nom <name>` Search a song with track name or artist.
 * `/queue` Check song queue list.
+* `/latest` Check last 30 songs recently added.
 
 #### Admin
 
