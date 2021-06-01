@@ -19,8 +19,9 @@ func createSongListButton(offset int) [][]tdlib.InlineKeyboardButton {
 		if songList[i] == "" {
 			continue
 		}
+		num := strconv.Itoa(i + 1)
 		idx := strconv.Itoa(i)
-		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(idx, tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+idx)))})
+		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(num, tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+idx)))})
 	}
 	mutex.Unlock()
 
@@ -44,7 +45,7 @@ func createResultList(list map[int]string, offset int) string {
 			break
 		}
 		rList = fmt.Sprintf("%v\n"+
-			"<b>%v</b>. <code>%v</code>", rList, keys[i], list[keys[i]])
+			"<b>%v</b>. <code>%v</code>", rList, keys[i]+1, list[keys[i]])
 	}
 
 	return rList

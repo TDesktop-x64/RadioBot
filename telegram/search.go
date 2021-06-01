@@ -34,15 +34,16 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 	sort.Ints(keys)
 
 	count := 0
-	for _, k := range keys[offset:] {
+	for _, i := range keys[offset:] {
 		if count >= config.GetRowLimit() {
 			break
 		}
-		if list[k] == "" {
+		if list[i] == "" {
 			continue
 		}
-		idx := strconv.Itoa(k)
-		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(idx, tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+idx)))})
+		num := strconv.Itoa(i + 1)
+		idx := strconv.Itoa(i)
+		songKb = append(songKb, []tdlib.InlineKeyboardButton{*tdlib.NewInlineKeyboardButton(num, tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_song:"+idx)))})
 		count++
 	}
 
