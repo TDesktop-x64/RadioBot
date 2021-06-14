@@ -75,12 +75,10 @@ func startVote(chatID, msgID int64, userID int32) {
 	}
 
 	hashedID := getUserIDHash(userID)
-	if config.IsPtcpsOnly() {
-		if !utils.ContainsString(grpStatus.Ptcps, hashedID) {
-			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
-			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
-			return
-		}
+	if config.IsPtcpsOnly() && !utils.ContainsString(grpStatus.Ptcps, hashedID) {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		return
 	}
 
 	if grpStatus.isVoting {
