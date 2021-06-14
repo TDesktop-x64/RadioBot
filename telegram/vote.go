@@ -230,7 +230,8 @@ func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
 		return
 	}
 
-	if config.IsPtcpsOnly() {
+	hashedID := getUserIDHash(userID)
+	if !utils.ContainsString(GetPtcps(), hashedID) && config.IsPtcpsOnly() {
 		bot.AnswerCallbackQuery(queryID, "Only users which are in a voice chat can vote!", false, "", 5)
 		return
 	}
