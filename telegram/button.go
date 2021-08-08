@@ -51,25 +51,25 @@ func createResultList(list map[int]string, offset int) string {
 	return rList
 }
 
-func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch bool) *tdlib.ReplyMarkupInlineKeyboard {
+func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch, noBtn bool) *tdlib.ReplyMarkupInlineKeyboard {
 	cbTag := "page:"
 	if isSearch {
 		cbTag = "result:"
 	}
-	if len(songKb) < 10 && offset == 0 && isSearch {
+	if noBtn || len(songKb) < config.GetRowLimit() && offset == 0 && isSearch {
 
 	} else if offset == 0 {
 		songKb = append(songKb, []tdlib.InlineKeyboardButton{
-			*tdlib.NewInlineKeyboardButton("Next page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset+10)))),
+			*tdlib.NewInlineKeyboardButton("Next page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset+config.GetRowLimit())))),
 		})
-	} else if len(songKb) < 10 {
+	} else if len(songKb) < config.GetRowLimit() {
 		songKb = append(songKb, []tdlib.InlineKeyboardButton{
-			*tdlib.NewInlineKeyboardButton("Previous page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset-10)))),
+			*tdlib.NewInlineKeyboardButton("Previous page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset-config.GetRowLimit())))),
 		})
 	} else {
 		songKb = append(songKb, []tdlib.InlineKeyboardButton{
-			*tdlib.NewInlineKeyboardButton("Previous page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset-10)))),
-			*tdlib.NewInlineKeyboardButton("Next page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset+10)))),
+			*tdlib.NewInlineKeyboardButton("Previous page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset-config.GetRowLimit())))),
+			*tdlib.NewInlineKeyboardButton("Next page", tdlib.NewInlineKeyboardButtonTypeCallback([]byte(cbTag+strconv.Itoa(offset+config.GetRowLimit())))),
 		})
 	}
 	return tdlib.NewReplyMarkupInlineKeyboard(songKb)
@@ -91,7 +91,7 @@ func sendButtonMessage(chatID, msgID int64) {
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSongListButton(0)
-	kb := finalizeButton(songKb, 0, false)
+	kb := finalizeButton(songKb, 0, false, false)
 	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
 }
 
@@ -112,7 +112,7 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int)
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
 		songKb := createSongListButton(offset)
-		kb := finalizeButton(songKb, offset, false)
+		kb := finalizeButton(songKb, offset, false, false)
 		bot.EditMessageText(chatID, msgID, kb, text)
 	}
 }

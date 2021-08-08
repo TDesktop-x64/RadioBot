@@ -70,8 +70,10 @@ func sendCustomButtonMessage(chatID, msgID int64, list map[int]string) {
 	songKb := createSearchSongListButton(list, 0)
 
 	var kb *tdlib.ReplyMarkupInlineKeyboard
-	if len(list) > 0 {
-		kb = finalizeButton(songKb, 0, true)
+	if len(list) > config.GetRowLimit() {
+		kb = finalizeButton(songKb, 0, true, false)
+	} else if len(list) <= config.GetRowLimit() {
+		kb = finalizeButton(songKb, 0, true, true)
 	} else {
 		kb = tdlib.NewReplyMarkupInlineKeyboard(songKb)
 	}
@@ -107,7 +109,7 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 			}
 			text := tdlib.NewInputMessageText(format, false, false)
 			songKb := createSearchSongListButton(list, offset)
-			kb := finalizeButton(songKb, offset, true)
+			kb := finalizeButton(songKb, offset, true, false)
 			bot.EditMessageText(chatID, m.Id, kb, text)
 		}
 	}
