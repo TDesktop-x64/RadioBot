@@ -12,9 +12,16 @@ import (
 	"github.com/c0re100/RadioBot/config"
 )
 
+// songInfo song information
+type songInfo struct {
+	Index int
+	Name  string
+}
+
 var (
-	songList = make(map[int]string)
-	mutex    sync.Mutex
+	songList  = make(map[int]string)
+	albumList = make(map[string][]songInfo)
+	mutex sync.Mutex
 )
 
 type playlists struct {
@@ -42,8 +49,8 @@ func checkPlayerIsActive() {
 	_, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/player")
 	if err != nil {
 		log.Fatal("BeefWeb is not running?\n",
-			"If you're first time to use RadioBot, please read the documentation from this page.\n" +
-			"https://github.com/c0re100/RadioBot#quick-start")
+			"If you're first time to use RadioBot, please read the documentation from this page.\n"+
+				"https://github.com/c0re100/RadioBot#quick-start")
 	}
 }
 
@@ -81,7 +88,7 @@ func savePlaylistIndexAndName() error {
 	if err != nil {
 		return err
 	}
-	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistID() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25")
+	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistID() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25,%25album%25")
 	if err != nil {
 		return errors.New("playlist not found")
 	}
@@ -97,6 +104,7 @@ func savePlaylistIndexAndName() error {
 		for idx, item := range plc.PlaylistItems.Items {
 			if len(item.Columns[0]) > 0 {
 				songList[idx] = item.Columns[0]
+				albumList[item.Columns[1]] = append(albumList[item.Columns[1]], songInfo{Index: idx, Name: item.Columns[0]})
 			}
 		}
 	}

@@ -51,9 +51,11 @@ func createResultList(list map[int]string, offset int) string {
 	return rList
 }
 
-func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch, noBtn bool) *tdlib.ReplyMarkupInlineKeyboard {
+func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch, noBtn, isAlbum bool) *tdlib.ReplyMarkupInlineKeyboard {
 	cbTag := "page:"
-	if isSearch {
+	if isAlbum {
+		cbTag = "album:"
+	} else if isSearch {
 		cbTag = "result:"
 	}
 	if noBtn || len(songKb) < config.GetRowLimit() && offset == 0 && isSearch {
@@ -91,7 +93,7 @@ func sendButtonMessage(chatID, msgID int64) {
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSongListButton(0)
-	kb := finalizeButton(songKb, 0, false, false)
+	kb := finalizeButton(songKb, 0, false, false, false)
 	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
 }
 
@@ -112,7 +114,7 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int)
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
 		songKb := createSongListButton(offset)
-		kb := finalizeButton(songKb, offset, false, false)
+		kb := finalizeButton(songKb, offset, false, false, false)
 		bot.EditMessageText(chatID, msgID, kb, text)
 	}
 }

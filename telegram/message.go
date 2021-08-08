@@ -44,6 +44,8 @@ func newMessages() {
 				startVote(chatID, msgID, int32(senderID))
 			case "/search", "/nom":
 				nominate(chatID, msgID, int32(senderID), commandArgument(msgText))
+			case "/search_a", "/nom_a":
+				nominateAlbum(chatID, msgID, int32(senderID), commandArgument(msgText))
 			case "/queue":
 				checkQueueSong(chatID, msgID)
 			case "/latest":

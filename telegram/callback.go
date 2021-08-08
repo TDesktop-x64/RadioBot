@@ -31,6 +31,7 @@ func callbackQuery() {
 			page := strings.Split(data, "page:")
 			selIdx := strings.Split(data, "select_song:")
 			result := strings.Split(data, "result:")
+			album := strings.Split(data, "album:")
 
 			switch {
 			case data == "vote_skip":
@@ -55,7 +56,10 @@ func callbackQuery() {
 				editButtonMessage(chatID, msgID, queryID, offset)
 			case len(result) == 2:
 				offset, _ := strconv.Atoi(result[1])
-				editCustomButtonMessage(chatID, m, queryID, offset)
+				editCustomButtonMessage(chatID, m, queryID, offset, false)
+			case len(album) == 2:
+				offset, _ := strconv.Atoi(album[1])
+				editCustomButtonMessage(chatID, m, queryID, offset, true)
 			}
 		}(newMsg)
 	}
