@@ -51,5 +51,5 @@ func canReqSong(userID int32) (bool, int) {
 
 func resetRateLimiter() {
 	pageLimit = make(map[int32]*rate.RateLimiter)
-	reqLimit  = make(map[int32]*rate.RateLimiter)
+	reqLimit = make(map[int32]*rate.RateLimiter)
 }

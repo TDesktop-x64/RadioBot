@@ -15,13 +15,13 @@ import (
 // songInfo song information
 type songInfo struct {
 	Artist string
-	Track   string
+	Track  string
 	Album  string
 }
 
 var (
-	songList  = make(map[int]*songInfo)
-	mutex     sync.Mutex
+	songList = make(map[int]*songInfo)
+	mutex    sync.Mutex
 )
 
 type playlists struct {
@@ -105,7 +105,7 @@ func savePlaylistIndexAndName() error {
 			if len(item.Columns[0]) > 0 {
 				songList[idx] = &songInfo{
 					Artist: item.Columns[0],
-					Track:   item.Columns[1],
+					Track:  item.Columns[1],
 					Album:  item.Columns[2],
 				}
 			}
