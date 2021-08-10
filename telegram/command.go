@@ -91,7 +91,7 @@ func checkQueueSong(chatID, msgID int64) {
 func checkLatestSong(chatID, msgID int64, offset int) {
 	list := "Recently added:\n"
 	for i := offset; i < offset+30; i++ {
-		if songList[i] == "" {
+		if songList[i] == nil {
 			continue
 		}
 		list += fmt.Sprintf("<b>%v</b>. <code>%v</code>\n", i+1, songList[i])

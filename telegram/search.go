@@ -10,29 +10,30 @@ import (
 	"github.com/c0re100/go-tdlib"
 )
 
-func searchSong(text string) map[int]string {
-	var list = make(map[int]string)
+func searchSong(text string) map[int]*songInfo {
+	var list = make(map[int]*songInfo)
 	for i, s := range songList {
-		if strings.Contains(strings.ToLower(s), strings.ToLower(text)) {
+		if strings.Contains(strings.ToLower(s.Artist), strings.ToLower(text)) {
+			list[i] = s
+			continue
+		} else if strings.Contains(strings.ToLower(s.Track), strings.ToLower(text)) {
 			list[i] = s
 		}
 	}
 	return list
 }
 
-func searchAlbum(text string) map[int]string {
-	var list = make(map[int]string)
-	for album, song := range albumList {
-		if strings.Contains(strings.ToLower(album), strings.ToLower(text)) {
-			for _, info := range song {
-				list[info.Index] = info.Name
-			}
+func searchAlbum(text string) map[int]*songInfo {
+	var list = make(map[int]*songInfo)
+	for i, s := range songList {
+		if strings.Contains(strings.ToLower(s.Album), strings.ToLower(text)) {
+			list[i] = s
 		}
 	}
 	return list
 }
 
-func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.InlineKeyboardButton {
+func createSearchSongListButton(list map[int]*songInfo, offset int) [][]tdlib.InlineKeyboardButton {
 	var songKb [][]tdlib.InlineKeyboardButton
 
 	if offset > len(list) {
@@ -50,7 +51,7 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 		if count >= config.GetRowLimit() {
 			break
 		}
-		if list[i] == "" {
+		if list[i] == nil {
 			continue
 		}
 		num := strconv.Itoa(i + 1)
@@ -62,7 +63,7 @@ func createSearchSongListButton(list map[int]string, offset int) [][]tdlib.Inlin
 	return songKb
 }
 
-func sendCustomButtonMessage(chatID, msgID int64, list map[int]string, isAlbum bool) {
+func sendCustomButtonMessage(chatID, msgID int64, list map[int]*songInfo, isAlbum bool) {
 	var format *tdlib.FormattedText
 	rList := createResultList(list, 0)
 	if chatID < 0 {
@@ -103,7 +104,7 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 		case "messageText":
 			msgText := m2.Content.(*tdlib.MessageText).Text.Text
 
-			var list map[int]string
+			var list map[int]*songInfo
 			var rList string
 
 			if isAlbum {

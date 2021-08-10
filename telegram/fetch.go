@@ -14,14 +14,14 @@ import (
 
 // songInfo song information
 type songInfo struct {
-	Index int
-	Name  string
+	Artist string
+	Track   string
+	Album  string
 }
 
 var (
-	songList  = make(map[int]string)
-	albumList = make(map[string][]songInfo)
-	mutex sync.Mutex
+	songList  = make(map[int]*songInfo)
+	mutex     sync.Mutex
 )
 
 type playlists struct {
@@ -80,7 +80,7 @@ func getPlaylistItemCount() (string, error) {
 
 func savePlaylistIndexAndName() error {
 	if songList != nil {
-		songList = make(map[int]string)
+		songList = make(map[int]*songInfo)
 	}
 	defer mutex.Unlock()
 	mutex.Lock()
@@ -88,7 +88,7 @@ func savePlaylistIndexAndName() error {
 	if err != nil {
 		return err
 	}
-	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistID() + "/items/0%3A" + count + "?columns=%25artist%25%20-%20%25title%25,%25album%25")
+	resp, err := http.Get("http://localhost:" + strconv.Itoa(config.GetBeefWebPort()) + "/api/playlists/" + config.GetPlaylistID() + "/items/0%3A" + count + "?columns=%25artist%25,%25title%25,%25album%25")
 	if err != nil {
 		return errors.New("playlist not found")
 	}
@@ -103,8 +103,11 @@ func savePlaylistIndexAndName() error {
 	if err := json.Unmarshal(body, &plc); err == nil {
 		for idx, item := range plc.PlaylistItems.Items {
 			if len(item.Columns[0]) > 0 {
-				songList[idx] = item.Columns[0]
-				albumList[item.Columns[1]] = append(albumList[item.Columns[1]], songInfo{Index: idx, Name: item.Columns[0]})
+				songList[idx] = &songInfo{
+					Artist: item.Columns[0],
+					Track:   item.Columns[1],
+					Album:  item.Columns[2],
+				}
 			}
 		}
 	}

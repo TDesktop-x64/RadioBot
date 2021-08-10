@@ -16,7 +16,7 @@ func createSongListButton(offset int) [][]tdlib.InlineKeyboardButton {
 
 	mutex.Lock()
 	for i := offset; i < offset+config.GetRowLimit(); i++ {
-		if songList[i] == "" {
+		if songList[i] == nil {
 			continue
 		}
 		num := strconv.Itoa(i + 1)
@@ -28,7 +28,7 @@ func createSongListButton(offset int) [][]tdlib.InlineKeyboardButton {
 	return songKb
 }
 
-func createResultList(list map[int]string, offset int) string {
+func createResultList(list map[int]*songInfo, offset int) string {
 	var rList string
 	var keys []int
 
@@ -44,8 +44,9 @@ func createResultList(list map[int]string, offset int) string {
 		if len(keys) == i {
 			break
 		}
+		format := list[keys[i]].Artist + " - " + list[keys[i]].Track
 		rList = fmt.Sprintf("%v\n"+
-			"<b>%v</b>. <code>%v</code>", rList, keys[i]+1, list[keys[i]])
+			"<b>%v</b>. <code>%v</code>", rList, keys[i]+1, format)
 	}
 
 	return rList
@@ -120,7 +121,7 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int)
 }
 
 func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
-	if songList[idx] == "" {
+	if songList[idx] == nil {
 		bot.AnswerCallbackQuery(queryID, "This song is not available...", false, "", 180)
 	} else if len(GetQueue()) >= config.GetQueueLimit() {
 		bot.AnswerCallbackQuery(queryID, "Too many song in request song list now...\nPlease try again later~", false, "", 180)
@@ -142,7 +143,7 @@ func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 	}
 }
 
-func createTypeButton()  *tdlib.ReplyMarkupInlineKeyboard {
+func createTypeButton() *tdlib.ReplyMarkupInlineKeyboard {
 	kb := [][]tdlib.InlineKeyboardButton{
 		{
 			*tdlib.NewInlineKeyboardButton("Track/Artist", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_all"))),
