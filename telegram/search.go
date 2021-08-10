@@ -90,7 +90,7 @@ func sendCustomButtonMessage(chatID, msgID int64, list map[int]string, isAlbum b
 		kb = tdlib.NewReplyMarkupInlineKeyboard(songKb)
 	}
 
-	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
+	bot.EditMessageText(chatID, msgID, kb, text)
 }
 
 func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONInt64, offset int, isAlbum bool) {
@@ -143,6 +143,17 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 	}
 }
 
+func nominateType(chatID, msgID int64, userID int32, arg string) {
+	if arg == "" {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track/Artist/Album is empty.", nil), true, false)
+		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		return
+	}
+
+	msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Select type to search", nil), true, false)
+	bot.SendMessage(chatID, 0, msgID, nil, createTypeButton(), msgText)
+}
+
 func nominate(chatID, msgID int64, userID int32, arg string) {
 	if arg == "" {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track name or Artist name is empty.", nil), true, false)
@@ -155,7 +166,7 @@ func nominate(chatID, msgID int64, userID int32, arg string) {
 		sendCustomButtonMessage(chatID, msgID, list, false)
 	} else {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		bot.EditMessageText(chatID, msgID, nil, msgText)
 	}
 }
 
@@ -171,6 +182,6 @@ func nominateAlbum(chatID, msgID int64, userID int32, arg string) {
 		sendCustomButtonMessage(chatID, msgID, list, true)
 	} else {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		bot.EditMessageText(chatID, msgID, nil, msgText)
 	}
 }

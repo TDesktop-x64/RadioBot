@@ -28,6 +28,11 @@ func callbackQuery() {
 				return
 			}
 
+			m2, err := bot.GetMessage(chatID, m.ReplyToMessageId)
+			if err != nil {
+				return
+			}
+
 			page := strings.Split(data, "page:")
 			selIdx := strings.Split(data, "select_song:")
 			result := strings.Split(data, "result:")
@@ -48,6 +53,14 @@ func callbackQuery() {
 				voteOptionControl(chatID, msgID, userID, 1)
 			case data == "join_change":
 				voteOptionControl(chatID, msgID, userID, 2)
+			case data == "select_all":
+				if m2.Content.GetMessageContentEnum() == "messageText" {
+					nominate(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				}
+			case data == "select_album":
+				if m2.Content.GetMessageContentEnum() == "messageText" {
+					nominateAlbum(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				}
 			case len(selIdx) == 2:
 				idx, _ := strconv.Atoi(selIdx[1])
 				selectSongMessage(userID, queryID, idx)

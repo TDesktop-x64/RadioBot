@@ -141,3 +141,13 @@ func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 		}
 	}
 }
+
+func createTypeButton()  *tdlib.ReplyMarkupInlineKeyboard {
+	kb := [][]tdlib.InlineKeyboardButton{
+		{
+			*tdlib.NewInlineKeyboardButton("Track/Artist", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_all"))),
+			*tdlib.NewInlineKeyboardButton("Album", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_album"))),
+		},
+	}
+	return tdlib.NewReplyMarkupInlineKeyboard(kb)
+}
