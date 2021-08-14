@@ -155,10 +155,17 @@ func nominateType(chatID, msgID int64, userID int32, arg string) {
 	bot.SendMessage(chatID, 0, msgID, nil, createTypeButton(), msgText)
 }
 
-func nominate(chatID, msgID int64, userID int32, arg string) {
+func valueIsEmpty(chatID, msgID int64, arg string) bool {
 	if arg == "" {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track name or Artist name is empty.", nil), true, false)
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Value is empty.", nil), true, false)
 		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		return true
+	}
+	return false
+}
+
+func nominate(chatID, msgID int64, userID int32, arg string) {
+	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}
 
@@ -172,9 +179,7 @@ func nominate(chatID, msgID int64, userID int32, arg string) {
 }
 
 func nominateAlbum(chatID, msgID int64, userID int32, arg string) {
-	if arg == "" {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Album name is empty.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}
 
