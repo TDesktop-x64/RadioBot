@@ -52,14 +52,10 @@ func createResultList(list map[int]*songInfo, offset int) string {
 	return rList
 }
 
-func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch, noBtn, isAlbum bool) *tdlib.ReplyMarkupInlineKeyboard {
-	cbTag := "page:"
-	if isAlbum {
-		cbTag = "album:"
-	} else if isSearch {
-		cbTag = "result:"
-	}
-	if noBtn || len(songKb) < config.GetRowLimit() && offset == 0 && isSearch {
+func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, noBtn bool, sType int) *tdlib.ReplyMarkupInlineKeyboard {
+	cbTag := btnTag(sType)
+
+	if noBtn || len(songKb) < config.GetRowLimit() && offset == 0 {
 
 	} else if offset == 0 {
 		songKb = append(songKb, []tdlib.InlineKeyboardButton{
@@ -78,6 +74,22 @@ func finalizeButton(songKb [][]tdlib.InlineKeyboardButton, offset int, isSearch,
 	return tdlib.NewReplyMarkupInlineKeyboard(songKb)
 }
 
+func btnTag(sType int) string {
+	cbTag := "page:"
+
+	switch sType {
+	case 0:
+		cbTag = "all:"
+	case 1:
+		cbTag = "artist:"
+	case 2:
+		cbTag = "track:"
+	case 3:
+		cbTag = "album:"
+	}
+	return cbTag
+}
+
 func sendButtonMessage(chatID, msgID int64) {
 	var format *tdlib.FormattedText
 	rList := createResultList(songList, 0)
@@ -94,7 +106,7 @@ func sendButtonMessage(chatID, msgID int64) {
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSongListButton(0)
-	kb := finalizeButton(songKb, 0, false, false, false)
+	kb := finalizeButton(songKb, 0, false, 0)
 	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
 }
 
@@ -115,7 +127,7 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int)
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
 		songKb := createSongListButton(offset)
-		kb := finalizeButton(songKb, offset, false, false, false)
+		kb := finalizeButton(songKb, offset, false, 0)
 		bot.EditMessageText(chatID, msgID, kb, text)
 	}
 }
@@ -146,8 +158,12 @@ func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 func createTypeButton() *tdlib.ReplyMarkupInlineKeyboard {
 	kb := [][]tdlib.InlineKeyboardButton{
 		{
-			*tdlib.NewInlineKeyboardButton("Track/Artist", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_all"))),
+			*tdlib.NewInlineKeyboardButton("Artist", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_artist"))),
+			*tdlib.NewInlineKeyboardButton("Track", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_track"))),
 			*tdlib.NewInlineKeyboardButton("Album", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_album"))),
+		},
+		{
+			*tdlib.NewInlineKeyboardButton("Why not both?", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("select_all"))),
 		},
 	}
 	return tdlib.NewReplyMarkupInlineKeyboard(kb)

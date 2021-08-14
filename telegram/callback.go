@@ -30,14 +30,17 @@ func callbackQuery() {
 
 			m2, err2 := bot.GetMessage(chatID, m.ReplyToMessageId)
 			if err2 != nil {
-				if data == "select_all" || data == "select_album" {
+				if data == "select_all" || data == "select_artist" ||
+					data == "select_track" || data == "select_album" {
 					return
 				}
 			}
 
 			page := strings.Split(data, "page:")
 			selIdx := strings.Split(data, "select_song:")
-			result := strings.Split(data, "result:")
+			all := strings.Split(data, "all:")
+			artist := strings.Split(data, "artist:")
+			track := strings.Split(data, "track:")
 			album := strings.Split(data, "album:")
 
 			switch {
@@ -57,6 +60,14 @@ func callbackQuery() {
 				voteOptionControl(chatID, msgID, userID, 2)
 			case data == "select_all":
 				if m2.Content.GetMessageContentEnum() == "messageText" {
+					nominate(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				}
+			case data == "select_artist":
+				if m2.Content.GetMessageContentEnum() == "messageText" {
+					nominateArtist(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				}
+			case data == "select_track":
+				if m2.Content.GetMessageContentEnum() == "messageText" {
 					nominateTrack(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
 				}
 			case data == "select_album":
@@ -69,12 +80,18 @@ func callbackQuery() {
 			case len(page) == 2:
 				offset, _ := strconv.Atoi(page[1])
 				editButtonMessage(chatID, msgID, queryID, offset)
-			case len(result) == 2:
-				offset, _ := strconv.Atoi(result[1])
-				editCustomButtonMessage(chatID, m, queryID, offset, false)
+			case len(all) == 2:
+				offset, _ := strconv.Atoi(all[1])
+				editCustomButtonMessage(chatID, m, queryID, offset, 0)
+			case len(artist) == 2:
+				offset, _ := strconv.Atoi(all[1])
+				editCustomButtonMessage(chatID, m, queryID, offset, 1)
+			case len(track) == 2:
+				offset, _ := strconv.Atoi(all[1])
+				editCustomButtonMessage(chatID, m, queryID, offset, 2)
 			case len(album) == 2:
 				offset, _ := strconv.Atoi(album[1])
-				editCustomButtonMessage(chatID, m, queryID, offset, true)
+				editCustomButtonMessage(chatID, m, queryID, offset, 3)
 			}
 		}(newMsg)
 	}

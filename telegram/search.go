@@ -10,13 +10,38 @@ import (
 	"github.com/c0re100/go-tdlib"
 )
 
-func searchTrack(text string) map[int]*songInfo {
+func searchAll(text string) map[int]*songInfo {
 	var list = make(map[int]*songInfo)
 	for i, s := range songList {
 		if strings.Contains(strings.ToLower(s.Artist), strings.ToLower(text)) {
 			list[i] = s
 			continue
-		} else if strings.Contains(strings.ToLower(s.Track), strings.ToLower(text)) {
+		}
+		if strings.Contains(strings.ToLower(s.Track), strings.ToLower(text)) {
+			list[i] = s
+			continue
+		}
+		if strings.Contains(strings.ToLower(s.Album), strings.ToLower(text)) {
+			list[i] = s
+		}
+	}
+	return list
+}
+
+func searchArtist(text string) map[int]*songInfo {
+	var list = make(map[int]*songInfo)
+	for i, s := range songList {
+		if strings.Contains(strings.ToLower(s.Artist), strings.ToLower(text)) {
+			list[i] = s
+		}
+	}
+	return list
+}
+
+func searchTrack(text string) map[int]*songInfo {
+	var list = make(map[int]*songInfo)
+	for i, s := range songList {
+		if strings.Contains(strings.ToLower(s.Track), strings.ToLower(text)) {
 			list[i] = s
 		}
 	}
@@ -63,7 +88,7 @@ func createSearchSongListButton(list map[int]*songInfo, offset int) [][]tdlib.In
 	return songKb
 }
 
-func sendCustomButtonMessage(chatID, msgID int64, list map[int]*songInfo, isAlbum bool) {
+func sendCustomButtonMessage(chatID, msgID int64, list map[int]*songInfo, sType int) {
 	var format *tdlib.FormattedText
 	rList := createResultList(list, 0)
 	if chatID < 0 {
@@ -84,9 +109,9 @@ func sendCustomButtonMessage(chatID, msgID int64, list map[int]*songInfo, isAlbu
 
 	var kb *tdlib.ReplyMarkupInlineKeyboard
 	if len(list) > config.GetRowLimit() {
-		kb = finalizeButton(songKb, 0, true, false, isAlbum)
+		kb = finalizeButton(songKb, 0, false, sType)
 	} else if len(list) <= config.GetRowLimit() {
-		kb = finalizeButton(songKb, 0, true, true, isAlbum)
+		kb = finalizeButton(songKb, 0, true, sType)
 	} else {
 		kb = tdlib.NewReplyMarkupInlineKeyboard(songKb)
 	}
@@ -94,7 +119,7 @@ func sendCustomButtonMessage(chatID, msgID int64, list map[int]*songInfo, isAlbu
 	bot.EditMessageText(chatID, msgID, kb, text)
 }
 
-func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONInt64, offset int, isAlbum bool) {
+func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONInt64, offset int, sType int) {
 	if canSelectPage(chatID, queryID) {
 		m2, err := bot.GetMessage(chatID, m.ReplyToMessageId)
 		if err != nil {
@@ -107,13 +132,8 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 			var list map[int]*songInfo
 			var rList string
 
-			if isAlbum {
-				list = searchAlbum(commandArgument(msgText))
-				rList = createResultList(list, offset)
-			} else {
-				list = searchTrack(commandArgument(msgText))
-				rList = createResultList(list, offset)
-			}
+			list = createSearchList(sType, list, msgText)
+			rList = createResultList(list, offset)
 
 			var format *tdlib.FormattedText
 			if chatID < 0 {
@@ -129,19 +149,42 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 					"%v", len(list), rList)
 				format, _ = bot.ParseTextEntities(text, tdlib.NewTextParseModeHTML())
 			}
+
 			text := tdlib.NewInputMessageText(format, false, false)
 			songKb := createSearchSongListButton(list, offset)
-
-			var kb *tdlib.ReplyMarkupInlineKeyboard
-			if isAlbum {
-				kb = finalizeButton(songKb, offset, true, false, true)
-			} else {
-				kb = finalizeButton(songKb, offset, true, false, false)
-			}
-
+			kb := createResultKeyboard(sType, songKb, offset)
 			bot.EditMessageText(chatID, m.Id, kb, text)
 		}
 	}
+}
+
+func createResultKeyboard(sType int, songKb [][]tdlib.InlineKeyboardButton, offset int) *tdlib.ReplyMarkupInlineKeyboard {
+	var kb *tdlib.ReplyMarkupInlineKeyboard
+	switch sType {
+	case 0:
+		kb = finalizeButton(songKb, offset, false, 0)
+	case 1:
+		kb = finalizeButton(songKb, offset, false, 1)
+	case 2:
+		kb = finalizeButton(songKb, offset, false, 2)
+	case 3:
+		kb = finalizeButton(songKb, offset, false, 3)
+	}
+	return kb
+}
+
+func createSearchList(sType int, list map[int]*songInfo, msgText string) map[int]*songInfo {
+	switch sType {
+	case 0:
+		list = searchAll(commandArgument(msgText))
+	case 1:
+		list = searchArtist(commandArgument(msgText))
+	case 2:
+		list = searchTrack(commandArgument(msgText))
+	case 3:
+		list = searchAlbum(commandArgument(msgText))
+	}
+	return list
 }
 
 func nominateType(chatID, msgID int64, userID int32, arg string) {
@@ -164,6 +207,34 @@ func valueIsEmpty(chatID, msgID int64, arg string) bool {
 	return false
 }
 
+func nominate(chatID, msgID int64, userID int32, arg string) {
+	if valueIsEmpty(chatID, msgID, arg) {
+		return
+	}
+
+	list := searchAll(arg)
+	if len(list) > 0 {
+		sendCustomButtonMessage(chatID, msgID, list, 0)
+	} else {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
+		bot.EditMessageText(chatID, msgID, nil, msgText)
+	}
+}
+
+func nominateArtist(chatID, msgID int64, userID int32, arg string) {
+	if valueIsEmpty(chatID, msgID, arg) {
+		return
+	}
+
+	list := searchArtist(arg)
+	if len(list) > 0 {
+		sendCustomButtonMessage(chatID, msgID, list, 1)
+	} else {
+		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
+		bot.EditMessageText(chatID, msgID, nil, msgText)
+	}
+}
+
 func nominateTrack(chatID, msgID int64, userID int32, arg string) {
 	if valueIsEmpty(chatID, msgID, arg) {
 		return
@@ -171,7 +242,7 @@ func nominateTrack(chatID, msgID int64, userID int32, arg string) {
 
 	list := searchTrack(arg)
 	if len(list) > 0 {
-		sendCustomButtonMessage(chatID, msgID, list, false)
+		sendCustomButtonMessage(chatID, msgID, list, 2)
 	} else {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
 		bot.EditMessageText(chatID, msgID, nil, msgText)
@@ -185,7 +256,7 @@ func nominateAlbum(chatID, msgID int64, userID int32, arg string) {
 
 	list := searchAlbum(arg)
 	if len(list) > 0 {
-		sendCustomButtonMessage(chatID, msgID, list, true)
+		sendCustomButtonMessage(chatID, msgID, list, 3)
 	} else {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No result.", nil), true, false)
 		bot.EditMessageText(chatID, msgID, nil, msgText)
