@@ -57,7 +57,7 @@ func callbackQuery() {
 				voteOptionControl(chatID, msgID, userID, 2)
 			case data == "select_all":
 				if m2.Content.GetMessageContentEnum() == "messageText" {
-					nominate(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+					nominateTrack(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
 				}
 			case data == "select_album":
 				if m2.Content.GetMessageContentEnum() == "messageText" {

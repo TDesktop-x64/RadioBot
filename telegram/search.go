@@ -10,7 +10,7 @@ import (
 	"github.com/c0re100/go-tdlib"
 )
 
-func searchSong(text string) map[int]*songInfo {
+func searchTrack(text string) map[int]*songInfo {
 	var list = make(map[int]*songInfo)
 	for i, s := range songList {
 		if strings.Contains(strings.ToLower(s.Artist), strings.ToLower(text)) {
@@ -111,7 +111,7 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 				list = searchAlbum(commandArgument(msgText))
 				rList = createResultList(list, offset)
 			} else {
-				list = searchSong(commandArgument(msgText))
+				list = searchTrack(commandArgument(msgText))
 				rList = createResultList(list, offset)
 			}
 
@@ -164,12 +164,12 @@ func valueIsEmpty(chatID, msgID int64, arg string) bool {
 	return false
 }
 
-func nominate(chatID, msgID int64, userID int32, arg string) {
+func nominateTrack(chatID, msgID int64, userID int32, arg string) {
 	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}
 
-	list := searchSong(arg)
+	list := searchTrack(arg)
 	if len(list) > 0 {
 		sendCustomButtonMessage(chatID, msgID, list, false)
 	} else {
