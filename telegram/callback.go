@@ -28,9 +28,11 @@ func callbackQuery() {
 				return
 			}
 
-			m2, err := bot.GetMessage(chatID, m.ReplyToMessageId)
-			if err != nil {
-				return
+			m2, err2 := bot.GetMessage(chatID, m.ReplyToMessageId)
+			if err2 != nil {
+				if data == "select_all" || data == "select_album" {
+					return
+				}
 			}
 
 			page := strings.Split(data, "page:")
