@@ -37,7 +37,7 @@ func getCurrentPlaying(chatID, msgID int64) {
 }
 
 func isAdmin(chatID int64, userID int32) bool {
-	u, err := bot.GetChatMember(chatID, userID)
+	u, err := bot.GetChatMember(chatID, tdlib.NewMessageSenderUser(userID))
 	if err != nil {
 		fmt.Println(err.Error())
 		return false

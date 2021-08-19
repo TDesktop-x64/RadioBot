@@ -40,7 +40,7 @@ func GetRecent() []int {
 	return config.GetStatus().GetRecent()
 }
 
-func getUserIDHash(uID int32) string {
+func getUserIDHash(uID int64) string {
 	h := sha1.New()
 	h.Write([]byte(strconv.FormatInt(int64(uID), 10)))
 	bs := h.Sum(nil)
@@ -65,16 +65,16 @@ func startVote(chatID, msgID int64, userID int32) {
 			return
 		}
 
-		if c.VoiceChatGroupCallId == 0 {
+		if c.VoiceChat.GroupCallId == 0 {
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("This group do not have a voice chat.", nil), true, true)
 			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 			return
 		}
 		// Preload all users
-		_, _ = userBot.LoadGroupCallParticipants(c.VoiceChatGroupCallId, 5000)
+		_, _ = userBot.LoadGroupCallParticipants(c.VoiceChat.GroupCallId, 5000)
 	}
 
-	hashedID := getUserIDHash(userID)
+	hashedID := getUserIDHash(int64(userID))
 	if config.IsPtcpsOnly() && !utils.ContainsString(grpStatus.Ptcps, hashedID) {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Only users which are in a voice chat can vote!", nil), true, true)
 		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
@@ -192,12 +192,12 @@ func endVote(chatID, msgID int64) {
 			log.Println(err)
 			return
 		}
-		if c.VoiceChatGroupCallId == 0 {
+		if c.VoiceChat.GroupCallId == 0 {
 			resetVote()
 			log.Println("No group call currently.")
 			return
 		}
-		vc, err := userBot.GetGroupCall(c.VoiceChatGroupCallId)
+		vc, err := userBot.GetGroupCall(c.VoiceChat.GroupCallId)
 		if err != nil {
 			resetVote()
 			log.Println(err)
@@ -211,7 +211,7 @@ func endVote(chatID, msgID int64) {
 
 func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
 	if config.IsJoinNeeded() {
-		cm, err := bot.GetChatMember(config.GetChatID(), userID)
+		cm, err := bot.GetChatMember(config.GetChatID(), tdlib.NewMessageSenderUser(userID))
 		if err != nil {
 			bot.AnswerCallbackQuery(queryID, "Failed to fetch chat info! Please try again later~", true, "", 10)
 			return
@@ -228,7 +228,7 @@ func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
 		return
 	}
 
-	hashedID := getUserIDHash(userID)
+	hashedID := getUserIDHash(int64(userID))
 	if !utils.ContainsString(GetPtcps(), hashedID) && config.IsPtcpsOnly() {
 		bot.AnswerCallbackQuery(queryID, "Only users which are in a voice chat can vote!", false, "", 5)
 		return

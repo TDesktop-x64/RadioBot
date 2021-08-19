@@ -13,22 +13,23 @@ import (
 
 func joinGroupCall() {
 	c, _ := userBot.GetChat(config.GetChatID())
-	gc, _ := userBot.GetGroupCall(c.VoiceChatGroupCallId)
+	gc, _ := userBot.GetGroupCall(c.VoiceChat.GroupCallId)
 	grpStatus.vcID = gc.Id
 
 	data := wrtc.CreateOffer(userBot)
-	payload := tdlib.NewGroupCallPayload(data.UFrag, data.Pwd, nil)
-	for _, c := range data.Cert {
-		fp, _ := c.GetFingerprints()
-		for _, f := range fp {
-			payload.Fingerprints = append(payload.Fingerprints, *tdlib.NewGroupCallPayloadFingerprint(f.Value, "active", f.Value))
-		}
-	}
-	gcResp, err := userBot.JoinGroupCall(gc.Id, payload, int32(data.Ssrc), false)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	// todo
+	//payload := tdlib.NewGroupCallPayload(data.UFrag, data.Pwd, nil)
+	//for _, c := range data.Cert {
+	//	fp, _ := c.GetFingerprints()
+	//	for _, f := range fp {
+	//		payload.Fingerprints = append(payload.Fingerprints, *tdlib.NewGroupCallPayloadFingerprint(f.Value, "active", f.Value))
+	//	}
+	//}
+	//gcResp, err := userBot.JoinGroupCall(gc.Id, payload, int32(data.Ssrc), false)
+	//if err != nil {
+	//	log.Println(err)
+	//	return
+	//}
 
 	addLoadGroupCallPtpcsJob()
 	if !sch.IsRunning() {
@@ -36,7 +37,7 @@ func joinGroupCall() {
 		startScheduler()
 	}
 
-	go wrtc.Connect(gcResp, data)
+	go wrtc.Connect("todo", data)
 }
 
 func loadParticipants(chatID int64, userID int32) {
@@ -66,6 +67,14 @@ func newGroupCallUpdate() {
 	}
 }
 
+func GetSenderId(sender tdlib.MessageSender) int64 {
+	if sender.GetMessageSenderEnum() == "messageSenderUser" {
+		return int64(sender.(*tdlib.MessageSenderUser).UserId)
+	} else {
+		return sender.(*tdlib.MessageSenderChat).ChatId
+	}
+}
+
 func newGroupCallPtcpUpdate() {
 	fmt.Println("[Music] New GroupCallParticipant Receiver")
 	eventFilter := func(msg *tdlib.TdMessage) bool {
@@ -76,11 +85,11 @@ func newGroupCallPtcpUpdate() {
 	for newMsg := range receiver.Chan {
 		updateMsg := (newMsg).(*tdlib.UpdateGroupCallParticipant)
 		gcID := updateMsg.GroupCallId
-		userID := updateMsg.Participant.UserId
+		userID := GetSenderId(updateMsg.Participant.ParticipantId)
 		if grpStatus.vcID == gcID {
 			hashedID := getUserIDHash(userID)
-			if updateMsg.Participant.Order == 0 {
-				if userID == userBotID && wrtc.GetConnection().ConnectionState().String() != "closed" {
+			if updateMsg.Participant.Order == "0" {
+				if userID == int64(userBotID) && wrtc.GetConnection().ConnectionState().String() != "closed" {
 					time.Sleep(1 * time.Second)
 					log.Println("Userbot left voice chat...re-join now!")
 					joinGroupCall()

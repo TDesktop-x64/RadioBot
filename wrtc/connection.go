@@ -5,12 +5,12 @@ import (
 	"strconv"
 
 	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/go-tdlib"
+	// "github.com/c0re100/go-tdlib"
 	"github.com/pion/webrtc/v2"
 )
 
 // Connect connect to group call server
-func Connect(resp *tdlib.GroupCallJoinResponse, d *Data) {
+func Connect(resp string, d *Data) {
 	rSdp := createOfferSdp(resp, strconv.FormatInt(d.Ssrc, 10))
 	rOffer := webrtc.SessionDescription{
 		Type: webrtc.SDPTypeAnswer,
@@ -40,7 +40,7 @@ func Disconnect() {
 	if !config.IsWebEnabled() {
 		closeRTC <- true
 		c, _ := userBot.GetChat(config.GetChatID())
-		gc, _ := userBot.GetGroupCall(c.VoiceChatGroupCallId)
+		gc, _ := userBot.GetGroupCall(c.VoiceChat.GroupCallId)
 		userBot.LeaveGroupCall(gc.Id)
 	}
 }

@@ -55,56 +55,58 @@ func extractDesc(pc *webrtc.PeerConnection, sdp string) *Data {
 	}
 }
 
-func createOfferSdp(resp *tdlib.GroupCallJoinResponse, ssrc string) string {
+func createOfferSdp(resp string, ssrc string) string {
 	var offerSdp string
 
-	offerSdp += "v=0\n"
-	offerSdp += "o=- 6543245 2 IN IP4 0.0.0.0\n"
-	offerSdp += "s=-\n"
-	offerSdp += "t=0 0\n"
-	offerSdp += "a=group:BUNDLE 0\n"
-	offerSdp += "a=ice-lite\n"
-	offerSdp += "m=audio 1 UDP/TLS/RTP/SAVPF 111\n"
-	offerSdp += "c=IN IP4 0.0.0.0\n"
-	offerSdp += "a=mid:0\n"
-	if resp != nil {
-		offerSdp += "a=ice-ufrag:" + resp.Payload.Ufrag + "\n"
-		offerSdp += "a=ice-pwd:" + resp.Payload.Pwd + "\n"
-		for _, f := range resp.Payload.Fingerprints {
-			offerSdp += "a=fingerprint:sha-256 " + f.Fingerprint + "\n"
-		}
-		offerSdp += "a=setup:passive\n"
-		for i, c := range resp.Candidates {
-			offerSdp += "a=candidate:" + strconv.Itoa(i+1) + " 1 udp " + c.Priority + " " + c.Ip + " " + c.Port + " typ host generation 0\n"
-		}
-	}
-	offerSdp += "a=rtpmap:111 opus/48000/2\n"
-	offerSdp += "a=rtcp-fb:111 transport-cc\n"
-	offerSdp += "a=fmtp:111 minptime=10; useinbandfec=1\n"
-	offerSdp += "a=rtcp:1 IN IP4 0.0.0.0\n"
-	offerSdp += "a=rtcp-mux\n"
-	offerSdp += "a=recvonly\n"
+	// todo
+	//offerSdp += "v=0\n"
+	//offerSdp += "o=- 6543245 2 IN IP4 0.0.0.0\n"
+	//offerSdp += "s=-\n"
+	//offerSdp += "t=0 0\n"
+	//offerSdp += "a=group:BUNDLE 0\n"
+	//offerSdp += "a=ice-lite\n"
+	//offerSdp += "m=audio 1 UDP/TLS/RTP/SAVPF 111\n"
+	//offerSdp += "c=IN IP4 0.0.0.0\n"
+	//offerSdp += "a=mid:0\n"
+	//if resp != nil {
+	//	offerSdp += "a=ice-ufrag:" + resp.Payload.Ufrag + "\n"
+	//	offerSdp += "a=ice-pwd:" + resp.Payload.Pwd + "\n"
+	//	for _, f := range resp.Payload.Fingerprints {
+	//		offerSdp += "a=fingerprint:sha-256 " + f.Fingerprint + "\n"
+	//	}
+	//	offerSdp += "a=setup:passive\n"
+	//	for i, c := range resp.Candidates {
+	//		offerSdp += "a=candidate:" + strconv.Itoa(i+1) + " 1 udp " + c.Priority + " " + c.Ip + " " + c.Port + " typ host generation 0\n"
+	//	}
+	//}
+	//offerSdp += "a=rtpmap:111 opus/48000/2\n"
+	//offerSdp += "a=rtcp-fb:111 transport-cc\n"
+	//offerSdp += "a=fmtp:111 minptime=10; useinbandfec=1\n"
+	//offerSdp += "a=rtcp:1 IN IP4 0.0.0.0\n"
+	//offerSdp += "a=rtcp-mux\n"
+	//offerSdp += "a=recvonly\n"
 
 	return offerSdp
 }
 
-func createLocalSdp(resp *tdlib.GroupCallJoinResponse, offer string) string {
+func createLocalSdp(resp *tdlib.Text, offer string) string {
 	var offerSdp string
 
-	o := strings.Split(offer, "\n")
-	for _, s := range o {
-		if strings.Contains(s, "a=fingerprint:sha-256") {
-			for _, f := range resp.Payload.Fingerprints {
-				offerSdp += "a=fingerprint:sha-256 " + f.Fingerprint + "\n"
-			}
-		} else if strings.Contains(s, "a=ice-ufrag:") {
-			offerSdp += "a=ice-ufrag:" + resp.Payload.Ufrag + "\n"
-		} else if strings.Contains(s, "a=ice-pwd:") {
-			offerSdp += "a=ice-pwd:" + resp.Payload.Pwd + "\n"
-		} else {
-			offerSdp += s + "\n"
-		}
-	}
+	// todo
+	//o := strings.Split(offer, "\n")
+	//for _, s := range o {
+	//	if strings.Contains(s, "a=fingerprint:sha-256") {
+	//		for _, f := range resp.Payload.Fingerprints {
+	//			offerSdp += "a=fingerprint:sha-256 " + f.Fingerprint + "\n"
+	//		}
+	//	} else if strings.Contains(s, "a=ice-ufrag:") {
+	//		offerSdp += "a=ice-ufrag:" + resp.Payload.Ufrag + "\n"
+	//	} else if strings.Contains(s, "a=ice-pwd:") {
+	//		offerSdp += "a=ice-pwd:" + resp.Payload.Pwd + "\n"
+	//	} else {
+	//		offerSdp += s + "\n"
+	//	}
+	//}
 
 	return offerSdp
 }
