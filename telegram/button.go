@@ -149,7 +149,7 @@ func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
 			}
 
 			fb2k.PushQueue(idx)
-			choice := fmt.Sprintf("Your choice: %v | Song queue: %v", songList[idx], len(GetQueue()))
+			choice := fmt.Sprintf("Your choice: %v - %v | Song queue: %v", songList[idx].Artist, songList[idx].Track, len(GetQueue()))
 			bot.AnswerCallbackQuery(queryID, choice, false, "", 180)
 		}
 	}
