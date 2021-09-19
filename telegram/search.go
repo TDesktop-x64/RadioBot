@@ -120,9 +120,22 @@ func sendCustomButtonMessage(chatID, msgID int64, list map[int]*songInfo, sType 
 }
 
 func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONInt64, offset int, sType int) {
-	if canSelectPage(chatID, queryID) {
+	if canSelectPage(chatID, queryID, false) {
 		m2, err := bot.GetMessage(chatID, m.ReplyToMessageId)
 		if err != nil {
+			if sType == 0 {
+				switch m.Content.GetMessageContentEnum() {
+				case "messageText":
+					msgText := m.Content.(*tdlib.MessageText).Text.Text
+					msgEnt := m.Content.(*tdlib.MessageText).Text.Entities
+					command := checkCommand(msgText, msgEnt)
+					if command == "/request" {
+						editButtonMessage(chatID, m.Id, queryID, offset, true)
+					}
+				}
+			} else {
+				bot.AnswerCallbackQuery(queryID, "Please search again~", false, "", 0)
+			}
 			return
 		}
 		switch m2.Content.GetMessageContentEnum() {

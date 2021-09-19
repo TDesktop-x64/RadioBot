@@ -79,7 +79,7 @@ func callbackQuery() {
 				selectSongMessage(userID, queryID, idx)
 			case len(page) == 2:
 				offset, _ := strconv.Atoi(page[1])
-				editButtonMessage(chatID, msgID, queryID, offset)
+				editButtonMessage(chatID, msgID, queryID, offset, false)
 			case len(all) == 2:
 				offset, _ := strconv.Atoi(all[1])
 				editCustomButtonMessage(chatID, m, queryID, offset, 0)

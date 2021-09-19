@@ -110,8 +110,8 @@ func sendButtonMessage(chatID, msgID int64) {
 	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
 }
 
-func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int) {
-	if canSelectPage(chatID, queryID) {
+func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int, dontCount bool) {
+	if canSelectPage(chatID, queryID, dontCount) {
 		var format *tdlib.FormattedText
 		rList := createResultList(songList, offset)
 		if chatID < 0 {

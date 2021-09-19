@@ -14,7 +14,10 @@ var (
 	reqLimit  = make(map[int32]*rate.RateLimiter)
 )
 
-func canSelectPage(chatID int64, queryID tdlib.JSONInt64) bool {
+func canSelectPage(chatID int64, queryID tdlib.JSONInt64, dontCount bool) bool {
+	if dontCount {
+		return true
+	}
 	var cID int32
 
 	if chatID == config.GetChatID() {
