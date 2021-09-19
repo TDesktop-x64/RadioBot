@@ -84,10 +84,10 @@ func callbackQuery() {
 				offset, _ := strconv.Atoi(all[1])
 				editCustomButtonMessage(chatID, m, queryID, offset, 0)
 			case len(artist) == 2:
-				offset, _ := strconv.Atoi(all[1])
+				offset, _ := strconv.Atoi(artist[1])
 				editCustomButtonMessage(chatID, m, queryID, offset, 1)
 			case len(track) == 2:
-				offset, _ := strconv.Atoi(all[1])
+				offset, _ := strconv.Atoi(track[1])
 				editCustomButtonMessage(chatID, m, queryID, offset, 2)
 			case len(album) == 2:
 				offset, _ := strconv.Atoi(album[1])
