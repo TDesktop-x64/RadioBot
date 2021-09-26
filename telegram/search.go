@@ -126,12 +126,7 @@ func editCustomButtonMessage(chatID int64, m *tdlib.Message, queryID tdlib.JSONI
 			if sType == 0 {
 				switch m.Content.GetMessageContentEnum() {
 				case "messageText":
-					msgText := m.Content.(*tdlib.MessageText).Text.Text
-					msgEnt := m.Content.(*tdlib.MessageText).Text.Entities
-					command := checkCommand(msgText, msgEnt)
-					if command == "/request" {
-						editButtonMessage(chatID, m.Id, queryID, offset, true)
-					}
+					editButtonMessage(chatID, m.Id, queryID, offset, true)
 				}
 			} else {
 				bot.AnswerCallbackQuery(queryID, "Please search again~", false, "", 0)
