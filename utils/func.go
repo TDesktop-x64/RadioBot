@@ -31,8 +31,8 @@ func ContainsInt(s []int, v int) bool {
 	return false
 }
 
-// ContainsInt32 check value is contains []int32
-func ContainsInt32(s []int32, v int32) bool {
+// ContainsInt64 check value is contains []int32
+func ContainsInt64(s []int64, v int64) bool {
 	for _, vv := range s {
 		if vv == v {
 			return true

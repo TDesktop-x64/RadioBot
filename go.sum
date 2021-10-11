@@ -1,7 +1,7 @@
 github.com/beefsack/go-rate v0.0.0-20200827232406-6cde80facd47 h1:M57m0xQqZIhx7CEJgeLSvRFKEK1RjzRuIXiA3HfYU7g=
 github.com/beefsack/go-rate v0.0.0-20200827232406-6cde80facd47/go.mod h1:6YNgTHLutezwnBvyneBbwvB8C82y3dcoOj5EQJIdGXA=
-github.com/c0re100/go-tdlib v0.0.0-20210225210704-0d7d480c27f8 h1:kfIiCb/vzHaosRevNilPXjVxvikPY7yKt3oHiHTpowY=
-github.com/c0re100/go-tdlib v0.0.0-20210225210704-0d7d480c27f8/go.mod h1:Il5buPm8uQ4Ir3aI2dF0o8x0ymKxaMHihZjfN1/2Zjs=
+github.com/c0re100/go-tdlib v0.0.0-20211010204410-baf6e2c81b0d h1:lA4jx6hkjjmFNqdLpb+bzAeTsiJ5VyCUHljK652Idlo=
+github.com/c0re100/go-tdlib v0.0.0-20211010204410-baf6e2c81b0d/go.mod h1:Il5buPm8uQ4Ir3aI2dF0o8x0ymKxaMHihZjfN1/2Zjs=
 github.com/cheekybits/genny v1.0.0 h1:uGGa4nei+j20rOSeDeP5Of12XVm7TGUd4dJA9RDitfE=
 github.com/cheekybits/genny v1.0.0/go.mod h1:+tQajlRqAUrPI7DOSpB0XAqZYtQakVtB7wXkRAgjxjQ=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

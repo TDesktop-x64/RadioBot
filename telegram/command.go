@@ -36,7 +36,7 @@ func getCurrentPlaying(chatID, msgID int64) {
 	}
 }
 
-func isAdmin(chatID int64, userID int32) bool {
+func isAdmin(chatID int64, userID int64) bool {
 	u, err := bot.GetChatMember(chatID, tdlib.NewMessageSenderUser(userID))
 	if err != nil {
 		fmt.Println(err.Error())
@@ -50,7 +50,7 @@ func isAdmin(chatID int64, userID int32) bool {
 	return false
 }
 
-func playerControl(chatID int64, userID int32, cs int) {
+func playerControl(chatID int64, userID int64, cs int) {
 	if chatID == config.GetChatID() || chatID > 0 {
 		if isAdmin(config.GetChatID(), userID) {
 			switch cs {

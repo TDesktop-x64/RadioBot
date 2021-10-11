@@ -13,9 +13,9 @@ import (
 
 var (
 	bot       *tdlib.Client
-	botID     int32
+	botID     int64
 	userBot   *tdlib.Client
-	userBotID int32
+	userBotID int64
 )
 
 // New create telegram session

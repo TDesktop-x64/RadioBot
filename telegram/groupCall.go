@@ -40,7 +40,7 @@ func joinGroupCall() {
 	go wrtc.Connect("todo", data)
 }
 
-func loadParticipants(chatID int64, userID int32) {
+func loadParticipants(chatID int64, userID int64) {
 	if isAdmin(chatID, userID) {
 		gc, _ := userBot.GetGroupCall(grpStatus.vcID)
 		if gc.LoadedAllParticipants {
@@ -67,7 +67,7 @@ func newGroupCallUpdate() {
 	}
 }
 
-func GetSenderId(sender tdlib.MessageSender) int64 {
+func GetsenderId(sender tdlib.MessageSender) int64 {
 	if sender.GetMessageSenderEnum() == "messageSenderUser" {
 		return int64(sender.(*tdlib.MessageSenderUser).UserId)
 	} else {
@@ -85,7 +85,7 @@ func newGroupCallPtcpUpdate() {
 	for newMsg := range receiver.Chan {
 		updateMsg := (newMsg).(*tdlib.UpdateGroupCallParticipant)
 		gcID := updateMsg.GroupCallId
-		userID := GetSenderId(updateMsg.Participant.ParticipantId)
+		userID := GetsenderId(updateMsg.Participant.ParticipantId)
 		if grpStatus.vcID == gcID {
 			hashedID := getUserIDHash(userID)
 			if updateMsg.Participant.Order == "0" {

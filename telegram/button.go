@@ -132,7 +132,7 @@ func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int,
 	}
 }
 
-func selectSongMessage(userID int32, queryID tdlib.JSONInt64, idx int) {
+func selectSongMessage(userID int64, queryID tdlib.JSONInt64, idx int) {
 	if songList[idx] == nil {
 		bot.AnswerCallbackQuery(queryID, "This song is not available...", false, "", 180)
 	} else if len(GetQueue()) >= config.GetQueueLimit() {

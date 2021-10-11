@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func reloadConfig(queryID tdlib.JSONInt64, userID int32) {
+func reloadConfig(queryID tdlib.JSONInt64, userID int64) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}
@@ -19,7 +19,7 @@ func reloadConfig(queryID tdlib.JSONInt64, userID int32) {
 	bot.AnswerCallbackQuery(queryID, "Config reloaded.", false, "", 10)
 }
 
-func reloadPlaylist(queryID tdlib.JSONInt64, userID int32) {
+func reloadPlaylist(queryID tdlib.JSONInt64, userID int64) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}
@@ -31,7 +31,7 @@ func reloadPlaylist(queryID tdlib.JSONInt64, userID int32) {
 	bot.AnswerCallbackQuery(queryID, "Playlist reloaded.", false, "", 10)
 }
 
-func optionControl(chatID, msgID int64, userID int32, cs int, arg string) {
+func optionControl(chatID, msgID int64, userID int64, cs int, arg string) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}
@@ -96,7 +96,7 @@ func optionControl(chatID, msgID int64, userID int32, cs int, arg string) {
 	bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 }
 
-func voteOptionControl(chatID, msgID int64, userID int32, cs int) {
+func voteOptionControl(chatID, msgID int64, userID int64, cs int) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}

@@ -20,7 +20,7 @@ type groupStatus struct {
 	vcID         int32
 	duartion     int32
 	Ptcps        []string
-	voteSkip     []int32
+	voteSkip     []int64
 	isVoting     bool
 	isLoadPtcps  bool
 	lastVoteTime int64
@@ -47,7 +47,7 @@ func getUserIDHash(uID int64) string {
 	return hex.EncodeToString(bs)
 }
 
-func startVote(chatID, msgID int64, userID int32) {
+func startVote(chatID, msgID int64, userID int64) {
 	if chatID != config.GetChatID() {
 		return
 	}
@@ -111,7 +111,7 @@ func startVote(chatID, msgID int64, userID int32) {
 	grpStatus.lastVoteTime = time.Now().Unix()
 	updateTime := config.GetUpdateTime()
 
-	if !utils.ContainsInt32(grpStatus.voteSkip, userID) {
+	if !utils.ContainsInt64(grpStatus.voteSkip, userID) {
 		grpStatus.voteSkip = append(grpStatus.voteSkip, userID)
 	}
 	updateVote(chatID, m.Id, false)
@@ -149,7 +149,7 @@ func resetVote() {
 	grpStatus.isLoadPtcps = false
 	grpStatus.isVoting = false
 	grpStatus.duartion = 0
-	grpStatus.voteSkip = []int32{}
+	grpStatus.voteSkip = []int64{}
 }
 
 func finalizeVote(chatID, msgID int64, ptcpCount int32) {
@@ -209,7 +209,7 @@ func endVote(chatID, msgID int64) {
 	}
 }
 
-func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
+func setUserVote(chatID, msgID int64, userID int64, queryID tdlib.JSONInt64) {
 	if config.IsJoinNeeded() {
 		cm, err := bot.GetChatMember(config.GetChatID(), tdlib.NewMessageSenderUser(userID))
 		if err != nil {
@@ -223,7 +223,7 @@ func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
 		}
 	}
 
-	if utils.ContainsInt32(grpStatus.voteSkip, userID) {
+	if utils.ContainsInt64(grpStatus.voteSkip, userID) {
 		bot.AnswerCallbackQuery(queryID, "You're already vote!", false, "", 45)
 		return
 	}
@@ -239,8 +239,8 @@ func setUserVote(chatID, msgID int64, userID int32, queryID tdlib.JSONInt64) {
 }
 
 // AddVote add user to vote list
-func AddVote(userID int32) {
-	if !utils.ContainsInt32(grpStatus.voteSkip, userID) {
+func AddVote(userID int64) {
+	if !utils.ContainsInt64(grpStatus.voteSkip, userID) {
 		grpStatus.voteSkip = append(grpStatus.voteSkip, userID)
 	}
 }

@@ -10,15 +10,15 @@ import (
 )
 
 var (
-	pageLimit = make(map[int32]*rate.RateLimiter)
-	reqLimit  = make(map[int32]*rate.RateLimiter)
+	pageLimit = make(map[int64]*rate.RateLimiter)
+	reqLimit  = make(map[int64]*rate.RateLimiter)
 )
 
 func canSelectPage(chatID int64, queryID tdlib.JSONInt64, dontCount bool) bool {
 	if dontCount {
 		return true
 	}
-	var cID int32
+	var cID int64
 
 	if chatID == config.GetChatID() {
 		cID = -1000
@@ -26,7 +26,7 @@ func canSelectPage(chatID int64, queryID tdlib.JSONInt64, dontCount bool) bool {
 			pageLimit[cID] = rate.New(config.GetChatSelectLimit(), 1*time.Minute)
 		}
 	} else if chatID > 0 {
-		cID = int32(chatID)
+		cID = chatID
 		if pageLimit[cID] == nil {
 			pageLimit[cID] = rate.New(config.GetPrivateChatSelectLimit(), 1*time.Minute)
 		}
@@ -42,7 +42,7 @@ func canSelectPage(chatID int64, queryID tdlib.JSONInt64, dontCount bool) bool {
 	return true
 }
 
-func canReqSong(userID int32) (bool, int) {
+func canReqSong(userID int64) (bool, int) {
 	if reqLimit[userID] != nil {
 		ok, sec := reqLimit[userID].Try()
 		return ok, int(sec.Seconds())
@@ -53,6 +53,6 @@ func canReqSong(userID int32) (bool, int) {
 }
 
 func resetRateLimiter() {
-	pageLimit = make(map[int32]*rate.RateLimiter)
-	reqLimit = make(map[int32]*rate.RateLimiter)
+	pageLimit = make(map[int64]*rate.RateLimiter)
+	reqLimit = make(map[int64]*rate.RateLimiter)
 }

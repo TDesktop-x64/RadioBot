@@ -195,7 +195,7 @@ func createSearchList(sType int, list map[int]*songInfo, msgText string) map[int
 	return list
 }
 
-func nominateType(chatID, msgID int64, userID int32, arg string) {
+func nominateType(chatID, msgID int64, userID int64, arg string) {
 	if arg == "" {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Track/Artist/Album is empty.", nil), true, false)
 		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
@@ -215,7 +215,7 @@ func valueIsEmpty(chatID, msgID int64, arg string) bool {
 	return false
 }
 
-func nominate(chatID, msgID int64, userID int32, arg string) {
+func nominate(chatID, msgID int64, userID int64, arg string) {
 	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}
@@ -229,7 +229,7 @@ func nominate(chatID, msgID int64, userID int32, arg string) {
 	}
 }
 
-func nominateArtist(chatID, msgID int64, userID int32, arg string) {
+func nominateArtist(chatID, msgID int64, userID int64, arg string) {
 	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}
@@ -243,7 +243,7 @@ func nominateArtist(chatID, msgID int64, userID int32, arg string) {
 	}
 }
 
-func nominateTrack(chatID, msgID int64, userID int32, arg string) {
+func nominateTrack(chatID, msgID int64, userID int64, arg string) {
 	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}
@@ -257,7 +257,7 @@ func nominateTrack(chatID, msgID int64, userID int32, arg string) {
 	}
 }
 
-func nominateAlbum(chatID, msgID int64, userID int32, arg string) {
+func nominateAlbum(chatID, msgID int64, userID int64, arg string) {
 	if valueIsEmpty(chatID, msgID, arg) {
 		return
 	}

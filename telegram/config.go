@@ -84,7 +84,7 @@ func configButton() *tdlib.ReplyMarkupInlineKeyboard {
 	return tdlib.NewReplyMarkupInlineKeyboard(kb)
 }
 
-func configMenu(chatID, msgID int64, userID int32, refresh bool) {
+func configMenu(chatID, msgID int64, userID int64, refresh bool) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}
