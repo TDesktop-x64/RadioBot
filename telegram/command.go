@@ -81,10 +81,10 @@ func checkQueueSong(chatID, msgID int64) {
 			return
 		}
 		text := tdlib.NewInputMessageText(format, false, false)
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), nil, text)
 	} else {
 		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No queue song.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, msgText)
+		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), nil, msgText)
 	}
 }
 
@@ -102,5 +102,5 @@ func checkLatestSong(chatID, msgID int64, offset int) {
 		return
 	}
 	text := tdlib.NewInputMessageText(format, false, false)
-	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), nil, text)
+	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), nil, text)
 }

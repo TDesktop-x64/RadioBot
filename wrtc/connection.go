@@ -40,7 +40,7 @@ func Disconnect() {
 	if !config.IsWebEnabled() {
 		closeRTC <- true
 		c, _ := userBot.GetChat(config.GetChatID())
-		gc, _ := userBot.GetGroupCall(c.VoiceChat.GroupCallId)
+		gc, _ := userBot.GetGroupCall(c.VideoChat.GroupCallId)
 		userBot.LeaveGroupCall(gc.Id)
 	}
 }

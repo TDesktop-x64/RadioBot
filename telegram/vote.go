@@ -65,13 +65,13 @@ func startVote(chatID, msgID int64, userID int64) {
 			return
 		}
 
-		if c.VoiceChat.GroupCallId == 0 {
+		if c.VideoChat.GroupCallId == 0 {
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("This group do not have a voice chat.", nil), true, true)
 			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 			return
 		}
 		// Preload all users
-		_, _ = userBot.LoadGroupCallParticipants(c.VoiceChat.GroupCallId, 5000)
+		_, _ = userBot.LoadGroupCallParticipants(c.VideoChat.GroupCallId, 5000)
 	}
 
 	hashedID := getUserIDHash(int64(userID))
@@ -192,12 +192,12 @@ func endVote(chatID, msgID int64) {
 			log.Println(err)
 			return
 		}
-		if c.VoiceChat.GroupCallId == 0 {
+		if c.VideoChat.GroupCallId == 0 {
 			resetVote()
 			log.Println("No group call currently.")
 			return
 		}
-		vc, err := userBot.GetGroupCall(c.VoiceChat.GroupCallId)
+		vc, err := userBot.GetGroupCall(c.VideoChat.GroupCallId)
 		if err != nil {
 			resetVote()
 			log.Println(err)

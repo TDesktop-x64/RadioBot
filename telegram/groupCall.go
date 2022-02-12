@@ -13,7 +13,7 @@ import (
 
 func joinGroupCall() {
 	c, _ := userBot.GetChat(config.GetChatID())
-	gc, _ := userBot.GetGroupCall(c.VoiceChat.GroupCallId)
+	gc, _ := userBot.GetGroupCall(c.VideoChat.GroupCallId)
 	grpStatus.vcID = gc.Id
 
 	data := wrtc.CreateOffer(userBot)

@@ -107,7 +107,7 @@ func sendButtonMessage(chatID, msgID int64) {
 	text := tdlib.NewInputMessageText(format, false, false)
 	songKb := createSongListButton(0)
 	kb := finalizeButton(songKb, 0, false, 0)
-	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), kb, text)
+	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), kb, text)
 }
 
 func editButtonMessage(chatID, msgID int64, queryID tdlib.JSONInt64, offset int, dontCount bool) {

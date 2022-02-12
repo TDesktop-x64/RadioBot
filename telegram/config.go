@@ -100,6 +100,6 @@ func configMenu(chatID, msgID int64, userID int64, refresh bool) {
 	if refresh {
 		bot.EditMessageText(chatID, msgID, configKb, text)
 	} else {
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, nil), configKb, text)
+		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), configKb, text)
 	}
 }

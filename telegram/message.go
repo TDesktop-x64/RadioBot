@@ -18,7 +18,7 @@ func newMessages() {
 			updateMsg := (newMsg).(*tdlib.UpdateNewMessage)
 			chatID := updateMsg.Message.ChatId
 			msgID := updateMsg.Message.Id
-			senderId := getsenderId(updateMsg.Message.Sender)
+			senderId := getsenderId(updateMsg.Message.SenderId)
 			var msgText string
 			var msgEnt []tdlib.TextEntity
 
