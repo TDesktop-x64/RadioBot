@@ -3,6 +3,7 @@ package telegram
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -29,7 +30,7 @@ func getCurrentPlaying(chatID, msgID int64) {
 	var event utils.Event
 	if err := json.Unmarshal(body, &event); err == nil {
 		if len(event.Player.ActiveItem.Columns) >= 1 {
-			songName := event.Player.ActiveItem.Columns[0]
+			songName := html.EscapeString(event.Player.ActiveItem.Columns[0])
 			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Now playing: \n"+songName, nil), true, false)
 			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
 		}
@@ -96,7 +97,7 @@ func checkLatestSong(chatID, msgID int64, offset int) {
 		}
 		list += fmt.Sprintf("<b>%v</b>. <code>%v - %v</code>\n", i+1, songList[i].Artist, songList[i].Track)
 	}
-	format, err := bot.ParseTextEntities(list, tdlib.NewTextParseModeHTML())
+	format, err := bot.ParseTextEntities(html.EscapeString(list), tdlib.NewTextParseModeHTML())
 	if err != nil {
 		log.Println(err)
 		return

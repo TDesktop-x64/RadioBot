@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"html"
 	"sort"
 	"strconv"
 
@@ -46,7 +47,7 @@ func createResultList(list map[int]*songInfo, offset int) string {
 		}
 		format := list[keys[i]].Artist + " - " + list[keys[i]].Track
 		rList = fmt.Sprintf("%v\n"+
-			"<b>%v</b>. <code>%v</code>", rList, keys[i]+1, format)
+			"<b>%v</b>. <code>%v</code>", rList, keys[i]+1, html.EscapeString(format))
 	}
 
 	return rList

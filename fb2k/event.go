@@ -3,6 +3,7 @@ package fb2k
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"strconv"
 	"sync"
@@ -91,7 +92,7 @@ func getEvent() {
 						"Track: %v\n"+
 						"Album: %v\n"+
 						"Duration: %v", utils.IsEmpty(artist), utils.IsEmpty(track), utils.IsEmpty(album), utils.SecondsToMinutes(int64(event.Player.ActiveItem.Duration)))
-					msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(text, nil), true, false)
+					msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(html.EscapeString(text), nil), true, false)
 					cID := config.GetChatID()
 					mID := config.GetPinnedMessage()
 
