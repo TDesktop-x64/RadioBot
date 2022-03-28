@@ -95,9 +95,9 @@ func checkLatestSong(chatID, msgID int64, offset int) {
 		if songList[i] == nil {
 			continue
 		}
-		list += fmt.Sprintf("<b>%v</b>. <code>%v - %v</code>\n", i+1, songList[i].Artist, songList[i].Track)
+		list += fmt.Sprintf("<b>%v</b>. <code>%v - %v</code>\n", i+1, html.EscapeString(songList[i].Artist), html.EscapeString(songList[i].Track))
 	}
-	format, err := bot.ParseTextEntities(html.EscapeString(list), tdlib.NewTextParseModeHTML())
+	format, err := bot.ParseTextEntities(list, tdlib.NewTextParseModeHTML())
 	if err != nil {
 		log.Println(err)
 		return
