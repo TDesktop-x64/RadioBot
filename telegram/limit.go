@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/beefsack/go-rate"
@@ -13,6 +14,7 @@ import (
 var (
 	pageLimit = make(map[int64]*rate.RateLimiter)
 	reqLimit  = make(map[int64]*rate.RateLimiter)
+	ReqLock   sync.Mutex
 )
 
 func canSelectPage(chatID int64, queryID tdlib.JsonInt64, dontCount bool) bool {
@@ -44,6 +46,8 @@ func canSelectPage(chatID int64, queryID tdlib.JsonInt64, dontCount bool) bool {
 }
 
 func canReqSong(userID int64) (bool, int) {
+	ReqLock.Lock()
+	defer ReqLock.Unlock()
 	if reqLimit[userID] != nil {
 		ok, sec := reqLimit[userID].Try()
 		return ok, int(sec.Seconds())
