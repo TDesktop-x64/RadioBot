@@ -9,7 +9,7 @@ type Status struct {
 
 // Config config JSON strust
 type Config struct {
-	ApiId        string `json:"api_id"`
+	ApiId        int32  `json:"api_id"`
 	ApiHash      string `json:"api_hash"`
 	BotToken     string `json:"bot_token"`
 	ChatId       int64  `json:"chat_id"`

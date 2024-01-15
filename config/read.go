@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -40,7 +39,7 @@ func readConfig() {
 
 // LoadConfig load config.json to Config
 func LoadConfig() error {
-	b, err := ioutil.ReadFile("config.json")
+	b, err := os.ReadFile("config.json")
 	if err != nil {
 		return err
 	}
@@ -58,7 +57,7 @@ func initStatus() {
 }
 
 func readStatus() {
-	if b, err := ioutil.ReadFile("status.json"); err == nil {
+	if b, err := os.ReadFile("status.json"); err == nil {
 		e := json.Unmarshal(b, &status)
 		if e != nil {
 			log.Println("status.json is broken...resetting")

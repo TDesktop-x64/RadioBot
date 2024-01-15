@@ -26,7 +26,6 @@ func addVoteJob(chatID, msgID int64, updateTime int32) {
 		return
 	}
 	timeLeftJob.Tag("timeleft")
-	timeLeftJob.RemoveAfterLastRun()
 }
 
 func addLoadGroupCallPtpcsJob() {

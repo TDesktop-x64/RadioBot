@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"log"
+
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 // SecondsToMinutes convert seconds to minutes
@@ -71,4 +73,21 @@ func CheckPortIsValid(method string, port int) {
 	if port < 1024 || port > 65535 {
 		log.Fatal(method+" port range: 1024-65535, but current port is ", port)
 	}
+}
+
+func GetSenderId(sender tdlib.MessageSender) int64 {
+	if sender.MessageSenderType() == "messageSenderUser" {
+		return sender.(*tdlib.MessageSenderUser).UserId
+	} else {
+		return sender.(*tdlib.MessageSenderChat).ChatId
+	}
+}
+
+func GetReplyMessageId(replyTo tdlib.MessageReplyTo) int64 {
+	if replyTo == nil {
+		return 0
+	} else if replyTo.MessageReplyToType() == tdlib.TypeMessageReplyToMessage {
+		return replyTo.(*tdlib.MessageReplyToMessage).MessageId
+	}
+	return 0
 }

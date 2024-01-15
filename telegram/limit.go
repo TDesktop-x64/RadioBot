@@ -6,7 +6,8 @@ import (
 
 	"github.com/beefsack/go-rate"
 	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/go-tdlib"
+	"github.com/c0re100/RadioBot/helper"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 var (
@@ -14,7 +15,7 @@ var (
 	reqLimit  = make(map[int64]*rate.RateLimiter)
 )
 
-func canSelectPage(chatID int64, queryID tdlib.JSONInt64, dontCount bool) bool {
+func canSelectPage(chatID int64, queryID tdlib.JsonInt64, dontCount bool) bool {
 	if dontCount {
 		return true
 	}
@@ -36,7 +37,7 @@ func canSelectPage(chatID int64, queryID tdlib.JSONInt64, dontCount bool) bool {
 
 	if ok, dur := pageLimit[cID].Try(); !ok {
 		sec := int32(dur.Seconds())
-		bot.AnswerCallbackQuery(queryID, fmt.Sprintf("Rate limited! Please try again in %v seconds~", sec), false, "", sec)
+		_, _ = bot.AnswerCallbackQuery(helper.NewAnswerCallbackQuery(queryID, fmt.Sprintf("Rate limited! Please try again in %v seconds~", sec), false, "", sec))
 		return false
 	}
 	return true

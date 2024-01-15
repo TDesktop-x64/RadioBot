@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/c0re100/go-tdlib"
+	tdlib "github.com/c0re100/gotdlib/client"
 	"github.com/pion/webrtc/v2"
 )
 

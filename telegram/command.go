@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/c0re100/RadioBot/config"
 	"github.com/c0re100/RadioBot/fb2k"
+	"github.com/c0re100/RadioBot/helper"
 	"github.com/c0re100/RadioBot/utils"
-	"github.com/c0re100/go-tdlib"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 func getCurrentPlaying(chatID, msgID int64) {
@@ -22,7 +23,7 @@ func getCurrentPlaying(chatID, msgID int64) {
 	}
 
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
@@ -31,20 +32,20 @@ func getCurrentPlaying(chatID, msgID int64) {
 	if err := json.Unmarshal(body, &event); err == nil {
 		if len(event.Player.ActiveItem.Columns) >= 1 {
 			songName := html.EscapeString(event.Player.ActiveItem.Columns[0])
-			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Now playing: \n"+songName, nil), true, false)
-			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+			msg := helper.NewSimpleMessage(chatID, 0, msgID, "Now playing: \n"+songName)
+			_, _ = bot.SendMessage(msg)
 		}
 	}
 }
 
 func isAdmin(chatID int64, userID int64) bool {
-	u, err := bot.GetChatMember(chatID, tdlib.NewMessageSenderUser(userID))
+	u, err := bot.GetChatMember(&tdlib.GetChatMemberRequest{ChatId: chatID, MemberId: helper.NewMessageSenderUser(userID)})
 	if err != nil {
 		fmt.Println(err.Error())
 		return false
 	}
 
-	if u.Status.GetChatMemberStatusEnum() == "chatMemberStatusAdministrator" || u.Status.GetChatMemberStatusEnum() == "chatMemberStatusCreator" {
+	if u.Status.ChatMemberStatusType() == "chatMemberStatusAdministrator" || u.Status.ChatMemberStatusType() == "chatMemberStatusCreator" {
 		return true
 	}
 
@@ -76,16 +77,16 @@ func checkQueueSong(chatID, msgID int64) {
 		for i, idx := range GetQueue() {
 			list += fmt.Sprintf("<b>%v</b>. <code>%v</code>\n", i+1, songList[idx])
 		}
-		format, err := bot.ParseTextEntities(list, tdlib.NewTextParseModeHTML())
+		format, err := tdlib.ParseTextEntities(helper.NewHTMLText(list))
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		text := tdlib.NewInputMessageText(format, false, false)
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), nil, text)
+		msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+		_, _ = bot.SendMessage(msg)
 	} else {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("No queue song.", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), nil, msgText)
+		msg := helper.NewSimpleMessage(chatID, 0, msgID, "No queue song.")
+		_, _ = bot.SendMessage(msg)
 	}
 }
 
@@ -97,11 +98,11 @@ func checkLatestSong(chatID, msgID int64, offset int) {
 		}
 		list += fmt.Sprintf("<b>%v</b>. <code>%v - %v</code>\n", i+1, html.EscapeString(songList[i].Artist), html.EscapeString(songList[i].Track))
 	}
-	format, err := bot.ParseTextEntities(list, tdlib.NewTextParseModeHTML())
+	format, err := tdlib.ParseTextEntities(helper.NewHTMLText(list))
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	text := tdlib.NewInputMessageText(format, false, false)
-	bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), nil, text)
+	msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+	_, _ = bot.SendMessage(msg)
 }

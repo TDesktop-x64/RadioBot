@@ -1,34 +1,36 @@
 package telegram
 
 import (
-	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/go-tdlib"
 	"strconv"
+
+	"github.com/c0re100/RadioBot/config"
+	"github.com/c0re100/RadioBot/helper"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
-func reloadConfig(queryID tdlib.JSONInt64, userID int64) {
+func reloadConfig(queryID tdlib.JsonInt64, userID int64) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}
 
 	if err := config.LoadConfig(); err != nil {
-		bot.AnswerCallbackQuery(queryID, err.Error(), false, "", 10)
+		_, _ = bot.AnswerCallbackQuery(helper.NewAnswerCallbackQuery(queryID, err.Error(), false, "", 10))
 		return
 	}
 	resetRateLimiter()
-	bot.AnswerCallbackQuery(queryID, "Config reloaded.", false, "", 10)
+	_, _ = bot.AnswerCallbackQuery(helper.NewAnswerCallbackQuery(queryID, "Config reloaded.", false, "", 10))
 }
 
-func reloadPlaylist(queryID tdlib.JSONInt64, userID int64) {
+func reloadPlaylist(queryID tdlib.JsonInt64, userID int64) {
 	if !isAdmin(config.GetChatID(), userID) {
 		return
 	}
 
 	if err := savePlaylistIndexAndName(); err != nil {
-		bot.AnswerCallbackQuery(queryID, err.Error(), false, "", 10)
+		_, _ = bot.AnswerCallbackQuery(helper.NewAnswerCallbackQuery(queryID, err.Error(), false, "", 10))
 		return
 	}
-	bot.AnswerCallbackQuery(queryID, "Playlist reloaded.", false, "", 10)
+	_, _ = bot.AnswerCallbackQuery(helper.NewAnswerCallbackQuery(queryID, "Playlist reloaded.", false, "", 10))
 }
 
 func optionControl(chatID, msgID int64, userID int64, cs int, arg string) {
@@ -37,15 +39,13 @@ func optionControl(chatID, msgID int64, userID int64, cs int, arg string) {
 	}
 
 	if arg == "" {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Command argument is empty.\nFormat: /setting_name <integer>", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, "Command argument is empty.\nFormat: /setting_name <integer>"))
 		return
 	}
 
 	val, err := strconv.ParseInt(arg, 10, 64)
 	if err != nil {
-		msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Command argument must be integer.\nFormat: /setting_name <integer>", nil), true, false)
-		bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+		_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, "Command argument must be integer.\nFormat: /setting_name <integer>"))
 		return
 	}
 
@@ -84,16 +84,14 @@ func optionControl(chatID, msgID int64, userID int64, cs int, arg string) {
 	case 9:
 		val, err := strconv.ParseFloat(arg, 64)
 		if err != nil {
-			msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText("Command argument must be float.\nFormat: /setting_name <float>", nil), true, false)
-			bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+			_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, "Command argument must be float.\nFormat: /setting_name <float>"))
 			return
 		}
 		cmd = "Timer: Vote success rate"
 		config.SetSuccessRate(val)
 	}
 
-	msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(cmd+" set to "+arg+".", nil), true, false)
-	bot.SendMessage(chatID, 0, msgID, nil, nil, msgText)
+	_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, cmd+" set to "+arg+"."))
 }
 
 func voteOptionControl(chatID, msgID int64, userID int64, cs int) {

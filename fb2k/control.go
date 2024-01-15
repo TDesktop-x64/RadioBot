@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/go-tdlib"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 var (

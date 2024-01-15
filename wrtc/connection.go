@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/c0re100/RadioBot/config"
-	// "github.com/c0re100/go-tdlib"
+	tdlib "github.com/c0re100/gotdlib/client"
 	"github.com/pion/webrtc/v2"
 )
 
@@ -39,9 +39,9 @@ func Connect(resp string, d *Data) {
 func Disconnect() {
 	if !config.IsWebEnabled() {
 		closeRTC <- true
-		c, _ := userBot.GetChat(config.GetChatID())
-		gc, _ := userBot.GetGroupCall(c.VideoChat.GroupCallId)
-		userBot.LeaveGroupCall(gc.Id)
+		c, _ := userBot.GetChat(&tdlib.GetChatRequest{ChatId: config.GetChatID()})
+		gc, _ := userBot.GetGroupCall(&tdlib.GetGroupCallRequest{GroupCallId: c.VideoChat.GroupCallId})
+		userBot.LeaveGroupCall(&tdlib.LeaveGroupCallRequest{GroupCallId: gc.Id})
 	}
 }
 

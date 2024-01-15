@@ -5,7 +5,8 @@ import (
 	"log"
 
 	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/go-tdlib"
+	"github.com/c0re100/RadioBot/helper"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 func boolToEmoji(b bool) string {
@@ -41,7 +42,7 @@ func configFormattedText() (*tdlib.FormattedText, error) {
 		currentConf += fmt.Sprintf("<b>Only users which are in the group can vote</b>: %v\n", boolToEmoji(config.IsJoinNeeded()))
 	}
 
-	format, err := bot.ParseTextEntities(currentConf, tdlib.NewTextParseModeHTML())
+	format, err := tdlib.ParseTextEntities(helper.NewHTMLText(currentConf))
 	if err != nil {
 		return nil, err
 	}
@@ -50,38 +51,38 @@ func configFormattedText() (*tdlib.FormattedText, error) {
 }
 
 func configButton() *tdlib.ReplyMarkupInlineKeyboard {
-	kb := [][]tdlib.InlineKeyboardButton{
+	kb := [][]*tdlib.InlineKeyboardButton{
 		{
-			*tdlib.NewInlineKeyboardButton("Refresh", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("refresh_config"))),
+			helper.NewInlineKeyboardCallbackColumn("Refresh", "refresh_config"),
 		},
 		{
-			*tdlib.NewInlineKeyboardButton("Vote setting", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("------------------------"))),
+			helper.NewInlineKeyboardCallbackColumn("Vote setting", "------------------------"),
 		},
 		{
-			*tdlib.NewInlineKeyboardButton("Enable", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("------------------------"))),
-			*tdlib.NewInlineKeyboardButton(boolToEmoji(config.IsVoteEnabled()), tdlib.NewInlineKeyboardButtonTypeCallback([]byte("vote_change"))),
+			helper.NewInlineKeyboardCallbackColumn("Enable", "------------------------"),
+			helper.NewInlineKeyboardCallbackColumn(boolToEmoji(config.IsVoteEnabled()), "vote_change"),
 		},
 	}
 
 	if config.IsVoteEnabled() {
-		kb = append(kb, [][]tdlib.InlineKeyboardButton{
+		kb = append(kb, [][]*tdlib.InlineKeyboardButton{
 			{
-				*tdlib.NewInlineKeyboardButton("Participants only", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("------------------------"))),
-				*tdlib.NewInlineKeyboardButton(boolToEmoji(config.IsPtcpsOnly()), tdlib.NewInlineKeyboardButtonTypeCallback([]byte("ptcp_change"))),
+				helper.NewInlineKeyboardCallbackColumn("Participants only", "------------------------"),
+				helper.NewInlineKeyboardCallbackColumn(boolToEmoji(config.IsPtcpsOnly()), "ptcp_change"),
 			},
 			{
-				*tdlib.NewInlineKeyboardButton("User join needed", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("------------------------"))),
-				*tdlib.NewInlineKeyboardButton(boolToEmoji(config.IsJoinNeeded()), tdlib.NewInlineKeyboardButtonTypeCallback([]byte("join_change"))),
+				helper.NewInlineKeyboardCallbackColumn("User join needed", "------------------------"),
+				helper.NewInlineKeyboardCallbackColumn(boolToEmoji(config.IsJoinNeeded()), "join_change"),
 			},
 		}...)
 	}
 
-	kb = append(kb, []tdlib.InlineKeyboardButton{
-		*tdlib.NewInlineKeyboardButton("Reload Config", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("reload_config"))),
-		*tdlib.NewInlineKeyboardButton("Reload Playlist", tdlib.NewInlineKeyboardButtonTypeCallback([]byte("reload_playlist"))),
+	kb = append(kb, []*tdlib.InlineKeyboardButton{
+		helper.NewInlineKeyboardCallbackColumn("Reload Config", "reload_config"),
+		helper.NewInlineKeyboardCallbackColumn("Reload Playlist", "reload_playlist"),
 	})
 
-	return tdlib.NewReplyMarkupInlineKeyboard(kb)
+	return helper.NewReplyMarkupInlineKeyboard(kb)
 }
 
 func configMenu(chatID, msgID int64, userID int64, refresh bool) {
@@ -96,10 +97,12 @@ func configMenu(chatID, msgID int64, userID int64, refresh bool) {
 	}
 
 	configKb := configButton()
-	text := tdlib.NewInputMessageText(format, false, false)
 	if refresh {
-		bot.EditMessageText(chatID, msgID, configKb, text)
+		msg := helper.NewEditMessageText(chatID, msgID, configKb, format)
+		_, _ = bot.EditMessageText(msg)
 	} else {
-		bot.SendMessage(chatID, 0, msgID, tdlib.NewMessageSendOptions(false, true, false, nil), configKb, text)
+		msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+		msg.ReplyMarkup = configKb
+		_, _ = bot.SendMessage(msg)
 	}
 }

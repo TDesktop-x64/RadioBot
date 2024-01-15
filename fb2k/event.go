@@ -10,8 +10,9 @@ import (
 	"time"
 
 	"github.com/c0re100/RadioBot/config"
+	"github.com/c0re100/RadioBot/helper"
 	"github.com/c0re100/RadioBot/utils"
-	"github.com/c0re100/go-tdlib"
+	tdlib "github.com/c0re100/gotdlib/client"
 	"github.com/r3labs/sse/v2"
 )
 
@@ -27,14 +28,14 @@ func isSameAsCurrent(songName string) bool {
 	return false
 }
 
-func sendNewMessage(chatID int64, msgText *tdlib.InputMessageText) {
-	m, newErr := bot.SendMessage(chatID, 0, 0, nil, nil, msgText)
+func sendNewMessage(msg *tdlib.SendMessageRequest) {
+	m, newErr := bot.SendMessage(msg)
 	if newErr != nil {
 		log.Println("[Send] Failed to broadcast current song...", newErr)
 		return
 	}
-	bot.PinChatMessage(chatID, m.Id, true, false)
-	bot.DeleteMessages(chatID, []int64{m.Id + 1048576}, true)
+	_, _ = bot.PinChatMessage(&tdlib.PinChatMessageRequest{ChatId: msg.ChatId, MessageId: m.Id, DisableNotification: true})
+	_, _ = bot.DeleteMessages(helper.NewDeleteMessages(msg.ChatId, []int64{m.Id + 1048576}))
 	config.SetPinnedMessage(m.Id)
 	config.SaveConfig()
 }
@@ -92,18 +93,19 @@ func getEvent() {
 						"Track: %v\n"+
 						"Album: %v\n"+
 						"Duration: %v", utils.IsEmpty(artist), utils.IsEmpty(track), utils.IsEmpty(album), utils.SecondsToMinutes(int64(event.Player.ActiveItem.Duration)))
-					msgText := tdlib.NewInputMessageText(tdlib.NewFormattedText(html.EscapeString(text), nil), true, false)
 					cID := config.GetChatID()
 					mID := config.GetPinnedMessage()
 
 					if mID == 0 {
-						sendNewMessage(cID, msgText)
+						msgText := helper.NewSimpleMessage(cID, 0, 0, html.EscapeString(text))
+						sendNewMessage(msgText)
 					} else {
-						_, getErr := bot.GetMessage(cID, mID)
+						_, getErr := bot.GetMessage(helper.NewGetMessage(cID, mID))
 						if getErr != nil {
-							sendNewMessage(cID, msgText)
+							msgText := helper.NewSimpleMessage(cID, 0, 0, html.EscapeString(text))
+							sendNewMessage(msgText)
 						} else {
-							_, editErr := bot.EditMessageText(cID, mID, nil, msgText)
+							_, editErr := bot.EditMessageText(helper.NewEditMessageText(cID, mID, nil, helper.NewFormattedText(html.EscapeString(text), nil)))
 							if editErr != nil {
 								log.Println("[Edit] Failed to broadcast current song...", editErr)
 								return

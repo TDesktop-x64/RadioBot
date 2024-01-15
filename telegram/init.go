@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"syscall"
 
 	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/go-tdlib"
-	"golang.org/x/crypto/ssh/terminal"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 var (
@@ -22,8 +20,14 @@ var (
 func New() (*tdlib.Client, *tdlib.Client) {
 	checkPlayerIsActive() // Check music player is running
 
-	tdlib.SetLogVerbosityLevel(0)
-	tdlib.SetFilePath("./errors.txt")
+	tdlib.SetLogLevel(0)
+	_, _ = tdlib.SetLogStream(&tdlib.SetLogStreamRequest{
+		LogStream: &tdlib.LogStreamFile{
+			Path:           "./errors.txt",
+			MaxFileSize:    1048576000,
+			RedirectStderr: true,
+		},
+	})
 
 	if _, err := os.Stat("instance"); os.IsNotExist(err) {
 		if err := os.Mkdir("instance", 0755); err != nil {
@@ -31,17 +35,11 @@ func New() (*tdlib.Client, *tdlib.Client) {
 		}
 	}
 
-	err := botLogin()
-	if err != nil {
-		log.Fatal("bot login failed:", err)
-	}
+	botLogin()
 	checkGroupIsExist(bot)
 
 	if !config.IsWebEnabled() {
-		err = userLogin()
-		if err != nil {
-			log.Fatal("userbot login failed:", err)
-		}
+		userLogin()
 		checkGroupIsExist(userBot)
 	}
 
@@ -53,90 +51,63 @@ func New() (*tdlib.Client, *tdlib.Client) {
 	return bot, userBot
 }
 
-func newClient(name string) *tdlib.Client {
-	return tdlib.NewClient(tdlib.Config{
-		APIID:               config.GetAPIID(),
-		APIHash:             config.GetAPIHash(),
-		SystemLanguageCode:  "en",
-		DeviceModel:         "Radio Controller",
-		SystemVersion:       "1.0",
-		ApplicationVersion:  "1.0",
-		UseMessageDatabase:  true,
-		UseFileDatabase:     true,
-		UseChatInfoDatabase: true,
-		UseTestDataCenter:   false,
-		DatabaseDirectory:   "./instance/" + name + "-db",
-		FileDirectory:       "./instance/" + name + "-files",
-		IgnoreFileNames:     false,
-	})
+func GetTdParameters(name string) *tdlib.SetTdlibParametersRequest {
+	return &tdlib.SetTdlibParametersRequest{
+		UseTestDc:              false,
+		DatabaseDirectory:      "./instance/" + name + "-db",
+		FilesDirectory:         "./instance/" + name + "-files",
+		UseFileDatabase:        true,
+		UseChatInfoDatabase:    true,
+		UseMessageDatabase:     true,
+		UseSecretChats:         false,
+		ApiId:                  config.GetAPIID(),
+		ApiHash:                config.GetAPIHash(),
+		SystemLanguageCode:     "en",
+		DeviceModel:            "Radio Controller",
+		SystemVersion:          "1.0",
+		ApplicationVersion:     "1.0",
+		EnableStorageOptimizer: true,
+		IgnoreFileNames:        false,
+	}
 }
 
-func botLogin() error {
-	bot = newClient("bot")
+func botLogin() {
+	authorizer := tdlib.BotAuthorizer(config.GetBotToken())
 
-	for {
-		currentState, _ := bot.Authorize()
-		if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitPhoneNumberType {
-			_, err := bot.CheckAuthenticationBotToken(config.GetBotToken())
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateReadyType {
-			me, err := bot.GetMe()
-			if err != nil {
-				return err
-			}
-			botID = me.Id
-			fmt.Println(me.Username + " connected.")
-			break
-		}
+	authorizer.TdlibParameters <- GetTdParameters("bot")
+
+	var err error
+	bot, err = tdlib.NewClient(authorizer)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return nil
+
+	me, err := bot.GetMe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	botID = me.Id
+	fmt.Println(me.Usernames.ActiveUsernames[0] + " connected.")
 }
 
-func userLogin() error {
-	userBot = newClient("user")
+func userLogin() {
+	authorizer := tdlib.ClientAuthorizer()
+	go tdlib.CliInteractor(authorizer)
 
-	for {
-		currentState, _ := userBot.Authorize()
-		if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitPhoneNumberType {
-			fmt.Print("Enter phone: ")
-			var number string
-			fmt.Scanln(&number)
-			_, err := userBot.SendPhoneNumber(number)
-			if err != nil {
-				fmt.Printf("Error sending phone number: %v", err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitCodeType {
-			fmt.Print("Enter code: ")
-			var code string
-			fmt.Scanln(&code)
-			_, err := userBot.SendAuthCode(code)
-			if err != nil {
-				fmt.Printf("Error sending auth code : %v", err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitPasswordType {
-			fmt.Print("Enter Password: ")
-			bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-			if err != nil {
-				fmt.Println(err)
-			}
-			_, err = userBot.SendAuthPassword(string(bytePassword))
-			if err != nil {
-				fmt.Printf("Error sending auth password: %v", err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateReadyType {
-			me, err := userBot.GetMe()
-			if err != nil {
-				return err
-			}
-			userBotID = me.Id
-			fmt.Println("\nHello!", me.FirstName, me.LastName, "("+me.Username+")")
-			break
-		}
+	authorizer.TdlibParameters <- GetTdParameters("user")
+
+	var err error
+	userBot, err = tdlib.NewClient(authorizer)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	return nil
+	me, err := userBot.GetMe()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("\nHello!", me.FirstName, me.LastName, "("+me.Usernames.ActiveUsernames[0]+")")
 }
 
 func createReceiver() {
@@ -156,18 +127,18 @@ func checkGroupIsExist(cl *tdlib.Client) {
 		if uName == "" {
 			log.Fatal("Username should not empty.")
 		}
-		s, err := cl.SearchPublicChat(uName)
+		s, err := cl.SearchPublicChat(&tdlib.SearchPublicChatRequest{Username: uName})
 		if err != nil {
 			log.Fatal("SearchPublicChat error:", err)
 		}
-		_, err = cl.GetChat(s.Id)
+		_, err = cl.GetChat(&tdlib.GetChatRequest{ChatId: s.Id})
 		if err != nil {
 			log.Fatal("GetChat error:", err)
 		}
 		config.SetChatID(s.Id)
 		config.SaveConfig()
 	} else {
-		_, err := cl.GetChat(config.GetChatID())
+		_, err := cl.GetChat(&tdlib.GetChatRequest{ChatId: config.GetChatID()})
 		if err != nil {
 			log.Fatal("GetChat error:", err)
 		}

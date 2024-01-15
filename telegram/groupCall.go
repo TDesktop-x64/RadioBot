@@ -8,12 +8,12 @@ import (
 	"github.com/c0re100/RadioBot/config"
 	"github.com/c0re100/RadioBot/utils"
 	"github.com/c0re100/RadioBot/wrtc"
-	"github.com/c0re100/go-tdlib"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 func joinGroupCall() {
-	c, _ := userBot.GetChat(config.GetChatID())
-	gc, _ := userBot.GetGroupCall(c.VideoChat.GroupCallId)
+	c, _ := userBot.GetChat(&tdlib.GetChatRequest{ChatId: config.GetChatID()})
+	gc, _ := userBot.GetGroupCall(&tdlib.GetGroupCallRequest{GroupCallId: c.VideoChat.GroupCallId})
 	grpStatus.vcID = gc.Id
 
 	data := wrtc.CreateOffer(userBot)
@@ -42,22 +42,19 @@ func joinGroupCall() {
 
 func loadParticipants(chatID int64, userID int64) {
 	if isAdmin(chatID, userID) {
-		gc, _ := userBot.GetGroupCall(grpStatus.vcID)
+		gc, _ := userBot.GetGroupCall(&tdlib.GetGroupCallRequest{GroupCallId: grpStatus.vcID})
 		if gc.LoadedAllParticipants {
 			return
 		}
-		userBot.LoadGroupCallParticipants(gc.Id, 5000)
+		_, _ = userBot.LoadGroupCallParticipants(&tdlib.LoadGroupCallParticipantsRequest{GroupCallId: gc.Id, Limit: 5000})
 	}
 }
 
 func newGroupCallUpdate() {
 	fmt.Println("[Music] New GroupCall Receiver")
-	eventFilter := func(msg *tdlib.TdMessage) bool {
-		return true
-	}
 
-	receiver := userBot.AddEventReceiver(&tdlib.UpdateGroupCall{}, eventFilter, 100)
-	for newMsg := range receiver.Chan {
+	listener := userBot.AddEventReceiver(&tdlib.UpdateGroupCall{}, 100)
+	for newMsg := range listener.Updates {
 		updateMsg := (newMsg).(*tdlib.UpdateGroupCall)
 		gcID := updateMsg.GroupCall.Id
 		// todo
@@ -68,8 +65,8 @@ func newGroupCallUpdate() {
 }
 
 func GetsenderId(sender tdlib.MessageSender) int64 {
-	if sender.GetMessageSenderEnum() == "messageSenderUser" {
-		return int64(sender.(*tdlib.MessageSenderUser).UserId)
+	if sender.MessageSenderType() == "messageSenderUser" {
+		return sender.(*tdlib.MessageSenderUser).UserId
 	} else {
 		return sender.(*tdlib.MessageSenderChat).ChatId
 	}
@@ -77,19 +74,16 @@ func GetsenderId(sender tdlib.MessageSender) int64 {
 
 func newGroupCallPtcpUpdate() {
 	fmt.Println("[Music] New GroupCallParticipant Receiver")
-	eventFilter := func(msg *tdlib.TdMessage) bool {
-		return true
-	}
 
-	receiver := userBot.AddEventReceiver(&tdlib.UpdateGroupCallParticipant{}, eventFilter, 5000)
-	for newMsg := range receiver.Chan {
+	listener := userBot.AddEventReceiver(&tdlib.UpdateGroupCallParticipant{}, 5000)
+	for newMsg := range listener.Updates {
 		updateMsg := (newMsg).(*tdlib.UpdateGroupCallParticipant)
 		gcID := updateMsg.GroupCallId
 		userID := GetsenderId(updateMsg.Participant.ParticipantId)
 		if grpStatus.vcID == gcID {
 			hashedID := getUserIDHash(userID)
 			if updateMsg.Participant.Order == "0" {
-				if userID == int64(userBotID) && wrtc.GetConnection().ConnectionState().String() != "closed" {
+				if userID == userBotID && wrtc.GetConnection().ConnectionState().String() != "closed" {
 					time.Sleep(1 * time.Second)
 					log.Println("Userbot left voice chat...re-join now!")
 					joinGroupCall()

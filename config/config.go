@@ -8,7 +8,7 @@ func GetConfig() Config {
 }
 
 // GetAPIID get API ID
-func GetAPIID() string {
+func GetAPIID() int32 {
 	return config.ApiId
 }
 

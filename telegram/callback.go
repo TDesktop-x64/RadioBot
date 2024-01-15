@@ -5,17 +5,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/c0re100/go-tdlib"
+	"github.com/c0re100/RadioBot/helper"
+	"github.com/c0re100/RadioBot/utils"
+	tdlib "github.com/c0re100/gotdlib/client"
 )
 
 func callbackQuery() {
 	fmt.Println("[Music] New Callback Receiver")
-	eventFilter := func(msg *tdlib.TdMessage) bool {
-		return true
-	}
-	receiver := bot.AddEventReceiver(&tdlib.UpdateNewCallbackQuery{}, eventFilter, 1000)
-	for newMsg := range receiver.Chan {
-		go func(newMsg tdlib.TdMessage) {
+	listener := bot.AddEventReceiver(&tdlib.UpdateNewCallbackQuery{}, 1000)
+	for newMsg := range listener.Updates {
+		go func(newMsg tdlib.Type) {
 			updateMsg := (newMsg).(*tdlib.UpdateNewCallbackQuery)
 			queryID := updateMsg.Id
 			chatID := updateMsg.ChatId
@@ -23,12 +22,12 @@ func callbackQuery() {
 			msgID := updateMsg.MessageId
 			data := string(updateMsg.Payload.(*tdlib.CallbackQueryPayloadData).Data)
 
-			m, err := bot.GetMessage(chatID, msgID)
+			m, err := bot.GetMessage(helper.NewGetMessage(chatID, msgID))
 			if err != nil {
 				return
 			}
 
-			m2, err2 := bot.GetMessage(chatID, m.ReplyToMessageId)
+			m2, err2 := bot.GetMessage(helper.NewGetMessage(chatID, utils.GetReplyMessageId(m.ReplyTo)))
 			if err2 != nil {
 				if data == "select_all" || data == "select_artist" ||
 					data == "select_track" || data == "select_album" {
@@ -59,20 +58,20 @@ func callbackQuery() {
 			case data == "join_change":
 				voteOptionControl(chatID, msgID, userID, 2)
 			case data == "select_all":
-				if m2.Content.GetMessageContentEnum() == "messageText" {
-					nominate(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				if m2.Content.MessageContentType() == "messageText" {
+					nominate(chatID, msgID, userID, tdlib.CommandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
 				}
 			case data == "select_artist":
-				if m2.Content.GetMessageContentEnum() == "messageText" {
-					nominateArtist(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				if m2.Content.MessageContentType() == "messageText" {
+					nominateArtist(chatID, msgID, userID, tdlib.CommandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
 				}
 			case data == "select_track":
-				if m2.Content.GetMessageContentEnum() == "messageText" {
-					nominateTrack(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				if m2.Content.MessageContentType() == "messageText" {
+					nominateTrack(chatID, msgID, userID, tdlib.CommandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
 				}
 			case data == "select_album":
-				if m2.Content.GetMessageContentEnum() == "messageText" {
-					nominateAlbum(chatID, msgID, userID, commandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
+				if m2.Content.MessageContentType() == "messageText" {
+					nominateAlbum(chatID, msgID, userID, tdlib.CommandArgument(m2.Content.(*tdlib.MessageText).Text.Text))
 				}
 			case len(selIdx) == 2:
 				idx, _ := strconv.Atoi(selIdx[1])
