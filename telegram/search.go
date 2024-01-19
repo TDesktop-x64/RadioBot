@@ -208,6 +208,7 @@ func nominateType(chatID, msgID int64, userID int64, arg string) {
 	}
 
 	msg := helper.NewSimpleMessage(chatID, 0, msgID, "Select type to search")
+	msg.ReplyMarkup = createTypeButton()
 	_, _ = bot.SendMessage(msg)
 }
 
