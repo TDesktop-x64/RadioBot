@@ -32,7 +32,7 @@ func getCurrentPlaying(chatID, msgID int64) {
 	if err := json.Unmarshal(body, &event); err == nil {
 		if len(event.Player.ActiveItem.Columns) >= 1 {
 			songName := html.EscapeString(event.Player.ActiveItem.Columns[0])
-			msg := helper.NewSimpleMessage(chatID, 0, msgID, "Now playing: \n"+songName)
+			msg := helper.NewSimpleMessage(chatID, msgID, "Now playing: \n"+songName)
 			_, _ = bot.SendMessage(msg)
 		}
 	}
@@ -82,10 +82,10 @@ func checkQueueSong(chatID, msgID int64) {
 			log.Println(err)
 			return
 		}
-		msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+		msg := helper.NewEnititesMessage(chatID, msgID, format)
 		_, _ = bot.SendMessage(msg)
 	} else {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "No queue song.")
+		msg := helper.NewSimpleMessage(chatID, msgID, "No queue song.")
 		_, _ = bot.SendMessage(msg)
 	}
 }
@@ -103,6 +103,6 @@ func checkLatestSong(chatID, msgID int64, offset int) {
 		log.Println(err)
 		return
 	}
-	msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+	msg := helper.NewEnititesMessage(chatID, msgID, format)
 	_, _ = bot.SendMessage(msg)
 }

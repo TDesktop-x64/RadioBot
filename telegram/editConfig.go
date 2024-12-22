@@ -39,13 +39,13 @@ func optionControl(chatID, msgID int64, userID int64, cs int, arg string) {
 	}
 
 	if arg == "" {
-		_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, "Command argument is empty.\nFormat: /setting_name <integer>"))
+		_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, msgID, "Command argument is empty.\nFormat: /setting_name <integer>"))
 		return
 	}
 
 	val, err := strconv.ParseInt(arg, 10, 64)
 	if err != nil {
-		_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, "Command argument must be integer.\nFormat: /setting_name <integer>"))
+		_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, msgID, "Command argument must be integer.\nFormat: /setting_name <integer>"))
 		return
 	}
 
@@ -84,14 +84,14 @@ func optionControl(chatID, msgID int64, userID int64, cs int, arg string) {
 	case 9:
 		val, err := strconv.ParseFloat(arg, 64)
 		if err != nil {
-			_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, "Command argument must be float.\nFormat: /setting_name <float>"))
+			_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, msgID, "Command argument must be float.\nFormat: /setting_name <float>"))
 			return
 		}
 		cmd = "Timer: Vote success rate"
 		config.SetSuccessRate(val)
 	}
 
-	_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, 0, msgID, cmd+" set to "+arg+"."))
+	_, _ = bot.SendMessage(helper.NewSimpleMessage(chatID, msgID, cmd+" set to "+arg+"."))
 }
 
 func voteOptionControl(chatID, msgID int64, userID int64, cs int) {

@@ -54,7 +54,7 @@ func startVote(chatID, msgID int64, userID int64) {
 	}
 
 	if !config.IsVoteEnabled() {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "This group is not allowed to vote.")
+		msg := helper.NewSimpleMessage(chatID, msgID, "This group is not allowed to vote.")
 		_, _ = bot.SendMessage(msg)
 		return
 	}
@@ -67,7 +67,7 @@ func startVote(chatID, msgID int64, userID int64) {
 		}
 
 		if c.VideoChat.GroupCallId == 0 {
-			msg := helper.NewSimpleMessage(chatID, 0, msgID, "This group do not have a voice chat.")
+			msg := helper.NewSimpleMessage(chatID, msgID, "This group do not have a voice chat.")
 			_, _ = bot.SendMessage(msg)
 			return
 		}
@@ -77,19 +77,19 @@ func startVote(chatID, msgID int64, userID int64) {
 
 	hashedID := getUserIDHash(int64(userID))
 	if config.IsPtcpsOnly() && !utils.ContainsString(grpStatus.Ptcps, hashedID) {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "Only users which are in a voice chat can vote!")
+		msg := helper.NewSimpleMessage(chatID, msgID, "Only users which are in a voice chat can vote!")
 		_, _ = bot.SendMessage(msg)
 		return
 	}
 
 	if grpStatus.isVoting {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "Vote in progress...")
+		msg := helper.NewSimpleMessage(chatID, msgID, "Vote in progress...")
 		_, _ = bot.SendMessage(msg)
 		return
 	}
 
 	if time.Now().Unix() < grpStatus.lastVoteTime+config.GetReleaseTime() {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "Skip a song was voted too recently...")
+		msg := helper.NewSimpleMessage(chatID, msgID, "Skip a song was voted too recently...")
 		_, _ = bot.SendMessage(msg)
 		return
 	}
@@ -100,7 +100,7 @@ func startVote(chatID, msgID int64, userID int64) {
 		},
 	})
 
-	msg := helper.NewSimpleMessage(chatID, 0, msgID, "Skip a song?")
+	msg := helper.NewSimpleMessage(chatID, msgID, "Skip a song?")
 	msg.ReplyMarkup = voteKb
 	m, err := bot.SendMessage(msg)
 	if err != nil {

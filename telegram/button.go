@@ -109,7 +109,7 @@ func sendButtonMessage(chatID, msgID int64) {
 			"%v", rList)
 		format, _ = tdlib.ParseTextEntities(helper.NewHTMLText(text))
 	}
-	msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+	msg := helper.NewEnititesMessage(chatID, msgID, format)
 	songKb := createSongListButton(0)
 	kb := finalizeButton(songKb, 0, false, 0)
 	msg.ReplyMarkup = kb

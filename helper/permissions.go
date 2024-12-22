@@ -20,24 +20,24 @@ func NewChatMemberStatusBanned(bannedUntilDate int32) *tdlib.ChatMemberStatusBan
 	}
 }
 
-func NewChatPermissions(canSendBasicMessages, canSendAudios, canSendDocuments, canSendPhotos, canSendVideos, canSendVideoNotes, canSendVoiceNotes, canSendPolls, canSendStickers, canSendAnimations, canSendGames, canUseInlineBots, canAddWebPagePreviews, canChangeInfo, canInviteUsers, canPinMessages bool) *tdlib.ChatPermissions {
+func NewChatPermissions(canSendBasicMessages, canSendAudios, canSendDocuments, canSendPhotos, canSendVideos, canSendVideoNotes, canSendVoiceNotes, canSendPolls, canSendStickers, canSendAnimations, canSendGames, canUseInlineBots, canAddLinkPreviews, canChangeInfo, canInviteUsers, canPinMessages bool) *tdlib.ChatPermissions {
 	return &tdlib.ChatPermissions{
-		CanSendBasicMessages:  canSendBasicMessages,
-		CanSendAudios:         canSendAudios,
-		CanSendDocuments:      canSendDocuments,
-		CanSendPhotos:         canSendPhotos,
-		CanSendVideos:         canSendVideos,
-		CanSendVideoNotes:     canSendVideoNotes,
-		CanSendVoiceNotes:     canSendVoiceNotes,
-		CanSendPolls:          canSendPolls,
-		CanSendStickers:       canSendStickers,
-		CanSendAnimations:     canSendAnimations,
-		CanSendGames:          canSendGames,
-		CanUseInlineBots:      canUseInlineBots,
-		CanAddWebPagePreviews: canAddWebPagePreviews,
-		CanChangeInfo:         canChangeInfo,
-		CanInviteUsers:        canInviteUsers,
-		CanPinMessages:        canPinMessages,
+		CanSendBasicMessages: canSendBasicMessages,
+		CanSendAudios:        canSendAudios,
+		CanSendDocuments:     canSendDocuments,
+		CanSendPhotos:        canSendPhotos,
+		CanSendVideos:        canSendVideos,
+		CanSendVideoNotes:    canSendVideoNotes,
+		CanSendVoiceNotes:    canSendVoiceNotes,
+		CanSendPolls:         canSendPolls,
+		CanSendStickers:      canSendStickers,
+		CanSendAnimations:    canSendAnimations,
+		CanSendGames:         canSendGames,
+		CanUseInlineBots:     canUseInlineBots,
+		CanAddLinkPreviews:   canAddLinkPreviews,
+		CanChangeInfo:        canChangeInfo,
+		CanInviteUsers:       canInviteUsers,
+		CanPinMessages:       canPinMessages,
 	}
 }
 

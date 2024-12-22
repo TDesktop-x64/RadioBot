@@ -66,8 +66,6 @@ func GetTdParameters(name string) *tdlib.SetTdlibParametersRequest {
 		DeviceModel:            "Radio Controller",
 		SystemVersion:          "1.0",
 		ApplicationVersion:     "1.0",
-		EnableStorageOptimizer: true,
-		IgnoreFileNames:        false,
 	}
 }
 

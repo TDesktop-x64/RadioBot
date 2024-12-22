@@ -62,6 +62,16 @@ func NewReplyMarkupInlineKeyboard(buttons [][]*tdlib.InlineKeyboardButton) *tdli
 	}
 }
 
+func NewAnswerCallbackQuery(callbackQueryId tdlib.JsonInt64, text string, showAlert bool, url string, cacheTime int32) *tdlib.AnswerCallbackQueryRequest {
+	return &tdlib.AnswerCallbackQueryRequest{
+		CallbackQueryId: callbackQueryId,
+		Text:            text,
+		ShowAlert:       showAlert,
+		Url:             url,
+		CacheTime:       cacheTime,
+	}
+}
+
 func NewInlineKeyboardCallbackRow(text string, callback string) []*tdlib.InlineKeyboardButton {
 	return []*tdlib.InlineKeyboardButton{
 		{
@@ -75,15 +85,5 @@ func NewInlineKeyboardCallbackColumn(text string, callback string) *tdlib.Inline
 	return &tdlib.InlineKeyboardButton{
 		Text: text,
 		Type: NewInlineKeyboardButtonCallback([]byte(callback)),
-	}
-}
-
-func NewAnswerCallbackQuery(callbackQueryId tdlib.JsonInt64, text string, showAlert bool, url string, cacheTime int32) *tdlib.AnswerCallbackQueryRequest {
-	return &tdlib.AnswerCallbackQueryRequest{
-		CallbackQueryId: callbackQueryId,
-		Text:            text,
-		ShowAlert:       showAlert,
-		Url:             url,
-		CacheTime:       cacheTime,
 	}
 }

@@ -202,19 +202,19 @@ func createSearchList(sType int, list map[int]*songInfo, msgText string) map[int
 
 func nominateType(chatID, msgID int64, userID int64, arg string) {
 	if arg == "" {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "Track/Artist/Album is empty.")
+		msg := helper.NewSimpleMessage(chatID, msgID, "Track/Artist/Album is empty.")
 		_, _ = bot.SendMessage(msg)
 		return
 	}
 
-	msg := helper.NewSimpleMessage(chatID, 0, msgID, "Select type to search")
+	msg := helper.NewSimpleMessage(chatID, msgID, "Select type to search")
 	msg.ReplyMarkup = createTypeButton()
 	_, _ = bot.SendMessage(msg)
 }
 
 func valueIsEmpty(chatID, msgID int64, arg string) bool {
 	if arg == "" {
-		msg := helper.NewSimpleMessage(chatID, 0, msgID, "Value is empty.")
+		msg := helper.NewSimpleMessage(chatID, msgID, "Value is empty.")
 		_, _ = bot.SendMessage(msg)
 		return true
 	}

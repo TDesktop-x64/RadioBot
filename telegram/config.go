@@ -101,7 +101,7 @@ func configMenu(chatID, msgID int64, userID int64, refresh bool) {
 		msg := helper.NewEditMessageText(chatID, msgID, configKb, format)
 		_, _ = bot.EditMessageText(msg)
 	} else {
-		msg := helper.NewEnititesMessage(chatID, 0, msgID, format)
+		msg := helper.NewEnititesMessage(chatID, msgID, format)
 		msg.ReplyMarkup = configKb
 		_, _ = bot.SendMessage(msg)
 	}

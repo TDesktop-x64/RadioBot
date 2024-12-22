@@ -97,12 +97,12 @@ func getEvent() {
 					mID := config.GetPinnedMessage()
 
 					if mID == 0 {
-						msgText := helper.NewSimpleMessage(cID, 0, 0, html.EscapeString(text))
+						msgText := helper.NewSimpleMessage(cID, 0, html.EscapeString(text))
 						sendNewMessage(msgText)
 					} else {
 						_, getErr := bot.GetMessage(helper.NewGetMessage(cID, mID))
 						if getErr != nil {
-							msgText := helper.NewSimpleMessage(cID, 0, 0, html.EscapeString(text))
+							msgText := helper.NewSimpleMessage(cID, 0, html.EscapeString(text))
 							sendNewMessage(msgText)
 						} else {
 							_, editErr := bot.EditMessageText(helper.NewEditMessageText(cID, mID, nil, helper.NewFormattedText(html.EscapeString(text), nil)))
