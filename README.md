@@ -77,14 +77,14 @@ through [beefweb plugins settings](images/beefweb_port.png) and edit [`beefweb_p
 [tdlib](https://github.com/tdlib/td#building)
 
 ```
-git clone https://github.com/c0re100/RadioBot
+git clone https://github.com/TDesktop-x64/RadioBot
 cd RadioBot
 go build
 ```
 
 ### Prebuilt
 
-[Release](https://github.com/c0re100/RadioBot/releases)
+[Release](https://github.com/TDesktop-x64/RadioBot/releases)
 
 ### Configuration
 

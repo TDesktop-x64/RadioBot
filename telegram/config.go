@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/RadioBot/helper"
+	"github.com/TDesktop-x64/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/helper"
 	tdlib "github.com/c0re100/gotdlib/client"
 )
 

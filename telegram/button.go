@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/RadioBot/fb2k"
-	"github.com/c0re100/RadioBot/helper"
-	"github.com/c0re100/RadioBot/utils"
+	"github.com/TDesktop-x64/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/fb2k"
+	"github.com/TDesktop-x64/RadioBot/helper"
+	"github.com/TDesktop-x64/RadioBot/utils"
 	tdlib "github.com/c0re100/gotdlib/client"
 )
 

@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/c0re100/RadioBot/utils"
+	"github.com/TDesktop-x64/RadioBot/utils"
 	"github.com/go-co-op/gocron"
 )
 

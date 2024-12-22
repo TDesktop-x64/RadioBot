@@ -1,4 +1,4 @@
-module github.com/c0re100/RadioBot
+module github.com/TDesktop-x64/RadioBot
 
 go 1.16
 

@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/RadioBot/fb2k"
-	"github.com/c0re100/RadioBot/telegram"
-	"github.com/c0re100/RadioBot/web"
-	"github.com/c0re100/RadioBot/wrtc"
+	"github.com/TDesktop-x64/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/fb2k"
+	"github.com/TDesktop-x64/RadioBot/telegram"
+	"github.com/TDesktop-x64/RadioBot/web"
+	"github.com/TDesktop-x64/RadioBot/wrtc"
 )
 
 var (

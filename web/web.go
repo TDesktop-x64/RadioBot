@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/RadioBot/telegram"
+	"github.com/TDesktop-x64/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/telegram"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

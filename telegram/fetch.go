@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/c0re100/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/config"
 )
 
 // songInfo song information
@@ -50,7 +50,7 @@ func checkPlayerIsActive() {
 	if err != nil {
 		log.Fatal("BeefWeb is not running?\n",
 			"If you're first time to use RadioBot, please read the documentation from this page.\n"+
-				"https://github.com/c0re100/RadioBot#quick-start")
+				"https://github.com/TDesktop-x64/RadioBot#quick-start")
 	}
 }
 

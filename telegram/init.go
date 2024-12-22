@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/c0re100/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/config"
 	tdlib "github.com/c0re100/gotdlib/client"
 )
 
@@ -53,19 +53,19 @@ func New() (*tdlib.Client, *tdlib.Client) {
 
 func GetTdParameters(name string) *tdlib.SetTdlibParametersRequest {
 	return &tdlib.SetTdlibParametersRequest{
-		UseTestDc:              false,
-		DatabaseDirectory:      "./instance/" + name + "-db",
-		FilesDirectory:         "./instance/" + name + "-files",
-		UseFileDatabase:        true,
-		UseChatInfoDatabase:    true,
-		UseMessageDatabase:     true,
-		UseSecretChats:         false,
-		ApiId:                  config.GetAPIID(),
-		ApiHash:                config.GetAPIHash(),
-		SystemLanguageCode:     "en",
-		DeviceModel:            "Radio Controller",
-		SystemVersion:          "1.0",
-		ApplicationVersion:     "1.0",
+		UseTestDc:           false,
+		DatabaseDirectory:   "./instance/" + name + "-db",
+		FilesDirectory:      "./instance/" + name + "-files",
+		UseFileDatabase:     true,
+		UseChatInfoDatabase: true,
+		UseMessageDatabase:  true,
+		UseSecretChats:      false,
+		ApiId:               config.GetAPIID(),
+		ApiHash:             config.GetAPIHash(),
+		SystemLanguageCode:  "en",
+		DeviceModel:         "Radio Controller",
+		SystemVersion:       "1.0",
+		ApplicationVersion:  "1.0",
 	}
 }
 

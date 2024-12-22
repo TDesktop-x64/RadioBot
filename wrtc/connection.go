@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/c0re100/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/config"
 	tdlib "github.com/c0re100/gotdlib/client"
 	"github.com/pion/webrtc/v2"
 )

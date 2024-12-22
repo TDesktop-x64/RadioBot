@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/c0re100/RadioBot/config"
-	"github.com/c0re100/RadioBot/utils"
-	"github.com/c0re100/RadioBot/wrtc"
+	"github.com/TDesktop-x64/RadioBot/config"
+	"github.com/TDesktop-x64/RadioBot/utils"
+	"github.com/TDesktop-x64/RadioBot/wrtc"
 	tdlib "github.com/c0re100/gotdlib/client"
 )
 
