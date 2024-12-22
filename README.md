@@ -1,20 +1,24 @@
-# Telegram Radio Controller (For TDesktop-x64 only)
+# Telegram Radio Controller (For 64Gram only)
 
-[![GitHub release](https://img.shields.io/github/v/release/c0re100/RadioBot.svg)](https://github.com/c0re100/RadioBot/releases/)
+[![GitHub release](https://img.shields.io/github/v/release/TDesktop-x64/RadioBot.svg)](https://github.com/TDesktop-x64/RadioBot/releases/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 ***
+
 ### Development branch
+
 ### Code may change frequently
+
 ### It's not suitable for production :)
+
 ***
 
-An experimental bot for controlling your TDesktop-x64(with Radio mode) music streaming session.
+An experimental bot for controlling your 64Gram(with Radio mode) music streaming session.
 
-[TDesktop-x64](https://github.com/TDesktop-x64) Radio mode is an experimental feature for streaming music through voice
+[64Gram](https://github.com/TDesktop-x64) Radio mode is an experimental feature for streaming music through voice
 chat without audio filtering/processing.
 
-That's mean you can stream your foobar2000/DeaDBeeF music library in TDesktop-x64.
+That's mean you can stream your foobar2000/DeaDBeeF music library in 64Gram.
 
 ## Features
 
@@ -43,18 +47,19 @@ Basically, request, skip and search a song are supported now.
 Unluckily, user radio bot IS NOT 100% implemented, I hope I will finish in someday...also help wanted!!!
 
 If you're familiar with [pion/webrtc](https://github.com/pion/webrtc), please feel free to contact me
-via [TDesktop-x64 Chat](https://t.me/tg_x64_chat) :)
+via [64Gram Chat](https://t.me/tg_x64_chat) :)
 
 ## Quick Start
 
 ### Requirements
 
-1. [Telegram Desktop x64](https://github.com/TDesktop-x64/tdesktop) with Radio mode
+1. [64Gram](https://github.com/TDesktop-x64/tdesktop) with Radio mode
 2. [foobar2000](https://www.foobar2000.org/) or [DeaDBeeF](https://deadbeef.sourceforge.io/)
 3. Virtual Audio (Windows: _VB-Cable_ Linux: _PulseAudio_ macOS: _BlackHole_)
 4. [Beefweb](https://github.com/hyperblast/beefweb)
 
-*If you can't access [Beefweb Web Interface with default port](http://localhost:8880), please change the port through [beefweb plugins settings](images/beefweb_port.png) and edit [`beefweb_port`](#configuration) in config.json.*
+*If you can't access [Beefweb Web Interface with default port](http://localhost:8880), please change the port
+through [beefweb plugins settings](images/beefweb_port.png) and edit [`beefweb_port`](#configuration) in config.json.*
 
 ### Setup
 
@@ -63,7 +68,7 @@ via [TDesktop-x64 Chat](https://t.me/tg_x64_chat) :)
 3. Copy config.json.sample to config.json
 4. Edit config.json (See [Configuration](#configuration))
 5. Open foobar2000 or DeaDBeeF, set virtual audio as your music player output
-6. Open TDesktop-x64, set virtual audio as your microphone
+6. Open 64Gram, set virtual audio as your microphone
 7. Add your control bot to group and join a voice chat to play your song.
 8. Done~
 
@@ -84,7 +89,7 @@ go build
 ### Configuration
 
 | Parameter        | Type    | Description                                                       |
-| ---------------- | ------- | ----------------------------------------------------------------- |
+|------------------|---------|-------------------------------------------------------------------|
 | `api_id`         | String  | Obtain API ID from [my.telegram.org](https://my.telegram.org)     |
 | `api_hash`       | String  | Obtain API Hash from [my.telegram.org](https://my.telegram.org)   |
 | `bot_token`      | String  | Obtain bot token from [@BotFather](https://t.me/BotFather)        |
@@ -96,7 +101,7 @@ go build
 |                  |         | Obtain ID from [Beefweb API](http://localhost:8880/api/playlists) |
 
 | **Limit**                 | Type    | Description                                            |
-| ------------------------- | ------- | ------------------------------------------------------ |
+|---------------------------|---------|--------------------------------------------------------|
 | `chat_select_limit`       | Integer | Select page of rate limit for Chat, Default: 5         |
 | `private_select_limit`    | Integer | Select page of rate limit for Private, Default: 10     |
 | `row_limit`               | Integer | Number of rows, Default: 10                            |
@@ -105,7 +110,7 @@ go build
 | `request_song_per_minute` | Integer | Request a songs per minute limit, Default: 1 minute(s) |
 
 | **Vote**             | Type    | Description                                                    |
-| -------------------- | ------- | -------------------------------------------------------------- |
+|----------------------|---------|----------------------------------------------------------------|
 | `enable`             | Boolean | If true, user can start a vote to skip current song.           |
 |                      |         | Default: true                                                  |
 | `vote_time`          | Integer | Vote time, Default: 45s / Minimum: 5s                          |
@@ -118,7 +123,7 @@ go build
 |                      |         | Default: false                                                 |
 
 | **Web**  | Type    | Description                                               |
-| -------- | ------- | --------------------------------------------------------- |
+|----------|---------|-----------------------------------------------------------|
 | `enable` | Boolean | If false, switch to Userbot mode.                         |
 |          |         | If `participants_only` is true, please enable web server, |
 |          |         | and fill the Radio controller url in TDesktop-x64.        |
